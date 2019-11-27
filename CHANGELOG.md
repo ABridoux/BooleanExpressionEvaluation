@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. `BooleanExp
 
 ---
 
-## [1.0.0](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/0.1.0) (27/11/2019)
+## [1.0.0](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.0.0) (27/11/2019)
 
-Initial release
+Initiial release
+
+
+## [0.1.0](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/0.1.0) (27/11/2019)
+
+Test release for CocoaPods 
