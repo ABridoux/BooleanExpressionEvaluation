@@ -12,6 +12,21 @@
 		BDE6B086238E5FA90021D4AD /* BooleanExpressionEvaluation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDE6B07C238E5FA90021D4AD /* BooleanExpressionEvaluation.framework */; };
 		BDE6B08B238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */; };
 		BDE6B08D238E5FA90021D4AD /* BooleanExpressionEvaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = BDE6B07F238E5FA90021D4AD /* BooleanExpressionEvaluation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		BDE6B0A3238E63710021D4AD /* ExpressionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B098238E63710021D4AD /* ExpressionError.swift */; };
+		BDE6B0A4238E63710021D4AD /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B099238E63710021D4AD /* Expression.swift */; };
+		BDE6B0A5238E63710021D4AD /* BooleanExpressionTokenizator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B09A238E63710021D4AD /* BooleanExpressionTokenizator.swift */; };
+		BDE6B0A6238E63710021D4AD /* ExpressionElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B09B238E63710021D4AD /* ExpressionElement.swift */; };
+		BDE6B0A7238E63710021D4AD /* HalfBooleanExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B09C238E63710021D4AD /* HalfBooleanExpression.swift */; };
+		BDE6B0A8238E63710021D4AD /* ExpressionEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B09D238E63710021D4AD /* ExpressionEvaluator.swift */; };
+		BDE6B0A9238E63710021D4AD /* ArrayExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B09F238E63710021D4AD /* ArrayExtension.swift */; };
+		BDE6B0AA238E63710021D4AD /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B0A0238E63710021D4AD /* StringExtensions.swift */; };
+		BDE6B0AB238E63710021D4AD /* NSRegularExpressionExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B0A1238E63710021D4AD /* NSRegularExpressionExtension.swift */; };
+		BDE6B0AC238E63710021D4AD /* VariablesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B0A2238E63710021D4AD /* VariablesProvider.swift */; };
+		BDE6B0B4238E638D0021D4AD /* BooleanExpressionTokenizorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B0AE238E638D0021D4AD /* BooleanExpressionTokenizorTests.swift */; };
+		BDE6B0B5238E638D0021D4AD /* ExpressionElementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B0AF238E638D0021D4AD /* ExpressionElementTests.swift */; };
+		BDE6B0B6238E638D0021D4AD /* ExpressionEvaluatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B0B0238E638D0021D4AD /* ExpressionEvaluatorTests.swift */; };
+		BDE6B0B7238E638D0021D4AD /* ExpressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B0B1238E638D0021D4AD /* ExpressionTests.swift */; };
+		BDE6B0B8238E638D0021D4AD /* VariablesProviderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B0B3238E638D0021D4AD /* VariablesProviderMock.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +49,21 @@
 		BDE6B085238E5FA90021D4AD /* BooleanExpressionEvaluationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BooleanExpressionEvaluationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanExpressionEvaluationTests.swift; sourceTree = "<group>"; };
 		BDE6B08C238E5FA90021D4AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BDE6B098238E63710021D4AD /* ExpressionError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpressionError.swift; sourceTree = "<group>"; };
+		BDE6B099238E63710021D4AD /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
+		BDE6B09A238E63710021D4AD /* BooleanExpressionTokenizator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BooleanExpressionTokenizator.swift; sourceTree = "<group>"; };
+		BDE6B09B238E63710021D4AD /* ExpressionElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpressionElement.swift; sourceTree = "<group>"; };
+		BDE6B09C238E63710021D4AD /* HalfBooleanExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HalfBooleanExpression.swift; sourceTree = "<group>"; };
+		BDE6B09D238E63710021D4AD /* ExpressionEvaluator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpressionEvaluator.swift; sourceTree = "<group>"; };
+		BDE6B09F238E63710021D4AD /* ArrayExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArrayExtension.swift; sourceTree = "<group>"; };
+		BDE6B0A0238E63710021D4AD /* StringExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
+		BDE6B0A1238E63710021D4AD /* NSRegularExpressionExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSRegularExpressionExtension.swift; sourceTree = "<group>"; };
+		BDE6B0A2238E63710021D4AD /* VariablesProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VariablesProvider.swift; sourceTree = "<group>"; };
+		BDE6B0AE238E638D0021D4AD /* BooleanExpressionTokenizorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BooleanExpressionTokenizorTests.swift; sourceTree = "<group>"; };
+		BDE6B0AF238E638D0021D4AD /* ExpressionElementTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpressionElementTests.swift; sourceTree = "<group>"; };
+		BDE6B0B0238E638D0021D4AD /* ExpressionEvaluatorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpressionEvaluatorTests.swift; sourceTree = "<group>"; };
+		BDE6B0B1238E638D0021D4AD /* ExpressionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpressionTests.swift; sourceTree = "<group>"; };
+		BDE6B0B3238E638D0021D4AD /* VariablesProviderMock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VariablesProviderMock.swift; sourceTree = "<group>"; };
 		C7655CBD995C3A4F7CD1FCF3 /* libPods-BooleanExpressionEvaluation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BooleanExpressionEvaluation.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAF7B2CD271FF08A313F3111 /* Pods-BooleanExpressionEvaluation.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BooleanExpressionEvaluation.release.xcconfig"; path = "Target Support Files/Pods-BooleanExpressionEvaluation/Pods-BooleanExpressionEvaluation.release.xcconfig"; sourceTree = "<group>"; };
 		D430332213FBFCF4BE3BFAF9 /* Pods-BooleanExpressionEvaluation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BooleanExpressionEvaluation.debug.xcconfig"; path = "Target Support Files/Pods-BooleanExpressionEvaluation/Pods-BooleanExpressionEvaluation.debug.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +124,9 @@
 		BDE6B07E238E5FA90021D4AD /* BooleanExpressionEvaluation */ = {
 			isa = PBXGroup;
 			children = (
+				BDE6B097238E63710021D4AD /* Expression */,
+				BDE6B09E238E63710021D4AD /* Extensions */,
+				BDE6B0A2238E63710021D4AD /* VariablesProvider.swift */,
 				BDE6B07F238E5FA90021D4AD /* BooleanExpressionEvaluation.h */,
 				BDE6B080238E5FA90021D4AD /* Info.plist */,
 			);
@@ -103,10 +136,54 @@
 		BDE6B089238E5FA90021D4AD /* BooleanExpressionEvaluationTests */ = {
 			isa = PBXGroup;
 			children = (
+				BDE6B0AD238E638D0021D4AD /* Expression */,
+				BDE6B0B2238E638D0021D4AD /* Mocks */,
 				BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */,
 				BDE6B08C238E5FA90021D4AD /* Info.plist */,
 			);
 			path = BooleanExpressionEvaluationTests;
+			sourceTree = "<group>";
+		};
+		BDE6B097238E63710021D4AD /* Expression */ = {
+			isa = PBXGroup;
+			children = (
+				BDE6B098238E63710021D4AD /* ExpressionError.swift */,
+				BDE6B09B238E63710021D4AD /* ExpressionElement.swift */,
+				BDE6B099238E63710021D4AD /* Expression.swift */,
+				BDE6B09A238E63710021D4AD /* BooleanExpressionTokenizator.swift */,
+				BDE6B09C238E63710021D4AD /* HalfBooleanExpression.swift */,
+				BDE6B09D238E63710021D4AD /* ExpressionEvaluator.swift */,
+			);
+			path = Expression;
+			sourceTree = "<group>";
+		};
+		BDE6B09E238E63710021D4AD /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				BDE6B09F238E63710021D4AD /* ArrayExtension.swift */,
+				BDE6B0A0238E63710021D4AD /* StringExtensions.swift */,
+				BDE6B0A1238E63710021D4AD /* NSRegularExpressionExtension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		BDE6B0AD238E638D0021D4AD /* Expression */ = {
+			isa = PBXGroup;
+			children = (
+				BDE6B0AE238E638D0021D4AD /* BooleanExpressionTokenizorTests.swift */,
+				BDE6B0AF238E638D0021D4AD /* ExpressionElementTests.swift */,
+				BDE6B0B0238E638D0021D4AD /* ExpressionEvaluatorTests.swift */,
+				BDE6B0B1238E638D0021D4AD /* ExpressionTests.swift */,
+			);
+			path = Expression;
+			sourceTree = "<group>";
+		};
+		BDE6B0B2238E638D0021D4AD /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				BDE6B0B3238E638D0021D4AD /* VariablesProviderMock.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 		EEA072F6128FA158FD24288C /* Frameworks */ = {
@@ -183,6 +260,7 @@
 				TargetAttributes = {
 					BDE6B07B238E5FA90021D4AD = {
 						CreatedOnToolsVersion = 11.2;
+						LastSwiftMigration = 1120;
 					};
 					BDE6B084238E5FA90021D4AD = {
 						CreatedOnToolsVersion = 11.2;
@@ -295,6 +373,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDE6B0AA238E63710021D4AD /* StringExtensions.swift in Sources */,
+				BDE6B0A7238E63710021D4AD /* HalfBooleanExpression.swift in Sources */,
+				BDE6B0A8238E63710021D4AD /* ExpressionEvaluator.swift in Sources */,
+				BDE6B0A6238E63710021D4AD /* ExpressionElement.swift in Sources */,
+				BDE6B0AC238E63710021D4AD /* VariablesProvider.swift in Sources */,
+				BDE6B0A3238E63710021D4AD /* ExpressionError.swift in Sources */,
+				BDE6B0AB238E63710021D4AD /* NSRegularExpressionExtension.swift in Sources */,
+				BDE6B0A9238E63710021D4AD /* ArrayExtension.swift in Sources */,
+				BDE6B0A5238E63710021D4AD /* BooleanExpressionTokenizator.swift in Sources */,
+				BDE6B0A4238E63710021D4AD /* Expression.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,7 +390,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDE6B0B8238E638D0021D4AD /* VariablesProviderMock.swift in Sources */,
+				BDE6B0B7238E638D0021D4AD /* ExpressionTests.swift in Sources */,
+				BDE6B0B4238E638D0021D4AD /* BooleanExpressionTokenizorTests.swift in Sources */,
+				BDE6B0B5238E638D0021D4AD /* ExpressionElementTests.swift in Sources */,
 				BDE6B08B238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift in Sources */,
+				BDE6B0B6238E638D0021D4AD /* ExpressionEvaluatorTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,6 +533,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D430332213FBFCF4BE3BFAF9 /* Pods-BooleanExpressionEvaluation.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -457,6 +551,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.alexisbridoux.BooleanExpressionEvaluation;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -465,6 +560,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CAF7B2CD271FF08A313F3111 /* Pods-BooleanExpressionEvaluation.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
@@ -490,6 +586,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B52333DF56B2FF4E5D298E96 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = QMZ7ESHY49;
@@ -509,6 +606,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 94BD83E8359F4912E2F4F142 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = QMZ7ESHY49;
