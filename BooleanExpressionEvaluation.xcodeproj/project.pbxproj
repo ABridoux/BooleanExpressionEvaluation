@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		947EE15D0571A3374489233C /* libPods-BooleanExpressionEvaluation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C7655CBD995C3A4F7CD1FCF3 /* libPods-BooleanExpressionEvaluation.a */; };
+		AD146D593180F1A1120C3896 /* libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7E489E2F389D785B1599C0 /* libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a */; };
 		BDE6B086238E5FA90021D4AD /* BooleanExpressionEvaluation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDE6B07C238E5FA90021D4AD /* BooleanExpressionEvaluation.framework */; };
 		BDE6B08B238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */; };
 		BDE6B08D238E5FA90021D4AD /* BooleanExpressionEvaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = BDE6B07F238E5FA90021D4AD /* BooleanExpressionEvaluation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -23,12 +25,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		94BD83E8359F4912E2F4F142 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.release.xcconfig"; path = "Target Support Files/Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests/Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.release.xcconfig"; sourceTree = "<group>"; };
+		B52333DF56B2FF4E5D298E96 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.debug.xcconfig"; path = "Target Support Files/Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests/Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.debug.xcconfig"; sourceTree = "<group>"; };
+		BC7E489E2F389D785B1599C0 /* libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDE6B07C238E5FA90021D4AD /* BooleanExpressionEvaluation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BooleanExpressionEvaluation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDE6B07F238E5FA90021D4AD /* BooleanExpressionEvaluation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BooleanExpressionEvaluation.h; sourceTree = "<group>"; };
 		BDE6B080238E5FA90021D4AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BDE6B085238E5FA90021D4AD /* BooleanExpressionEvaluationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BooleanExpressionEvaluationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanExpressionEvaluationTests.swift; sourceTree = "<group>"; };
 		BDE6B08C238E5FA90021D4AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C7655CBD995C3A4F7CD1FCF3 /* libPods-BooleanExpressionEvaluation.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BooleanExpressionEvaluation.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CAF7B2CD271FF08A313F3111 /* Pods-BooleanExpressionEvaluation.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BooleanExpressionEvaluation.release.xcconfig"; path = "Target Support Files/Pods-BooleanExpressionEvaluation/Pods-BooleanExpressionEvaluation.release.xcconfig"; sourceTree = "<group>"; };
+		D430332213FBFCF4BE3BFAF9 /* Pods-BooleanExpressionEvaluation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BooleanExpressionEvaluation.debug.xcconfig"; path = "Target Support Files/Pods-BooleanExpressionEvaluation/Pods-BooleanExpressionEvaluation.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				947EE15D0571A3374489233C /* libPods-BooleanExpressionEvaluation.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,18 +53,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				BDE6B086238E5FA90021D4AD /* BooleanExpressionEvaluation.framework in Frameworks */,
+				AD146D593180F1A1120C3896 /* libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		400008A8A96D936C198DBC2F /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D430332213FBFCF4BE3BFAF9 /* Pods-BooleanExpressionEvaluation.debug.xcconfig */,
+				CAF7B2CD271FF08A313F3111 /* Pods-BooleanExpressionEvaluation.release.xcconfig */,
+				B52333DF56B2FF4E5D298E96 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.debug.xcconfig */,
+				94BD83E8359F4912E2F4F142 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		BDE6B072238E5FA90021D4AD = {
 			isa = PBXGroup;
 			children = (
 				BDE6B07E238E5FA90021D4AD /* BooleanExpressionEvaluation */,
 				BDE6B089238E5FA90021D4AD /* BooleanExpressionEvaluationTests */,
 				BDE6B07D238E5FA90021D4AD /* Products */,
+				400008A8A96D936C198DBC2F /* Pods */,
+				EEA072F6128FA158FD24288C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -86,6 +109,15 @@
 			path = BooleanExpressionEvaluationTests;
 			sourceTree = "<group>";
 		};
+		EEA072F6128FA158FD24288C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C7655CBD995C3A4F7CD1FCF3 /* libPods-BooleanExpressionEvaluation.a */,
+				BC7E489E2F389D785B1599C0 /* libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -104,10 +136,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BDE6B090238E5FA90021D4AD /* Build configuration list for PBXNativeTarget "BooleanExpressionEvaluation" */;
 			buildPhases = (
+				965DCCB811699353493AFA27 /* [CP] Check Pods Manifest.lock */,
 				BDE6B077238E5FA90021D4AD /* Headers */,
 				BDE6B078238E5FA90021D4AD /* Sources */,
 				BDE6B079238E5FA90021D4AD /* Frameworks */,
 				BDE6B07A238E5FA90021D4AD /* Resources */,
+				BDE6B096238E60500021D4AD /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -122,6 +156,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BDE6B093238E5FA90021D4AD /* Build configuration list for PBXNativeTarget "BooleanExpressionEvaluationTests" */;
 			buildPhases = (
+				D360D66A296B50C61FB12BE3 /* [CP] Check Pods Manifest.lock */,
 				BDE6B081238E5FA90021D4AD /* Sources */,
 				BDE6B082238E5FA90021D4AD /* Frameworks */,
 				BDE6B083238E5FA90021D4AD /* Resources */,
@@ -189,6 +224,71 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		965DCCB811699353493AFA27 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BooleanExpressionEvaluation-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BDE6B096238E60500021D4AD /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+		D360D66A296B50C61FB12BE3 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BDE6B078238E5FA90021D4AD /* Sources */ = {
@@ -268,7 +368,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -325,7 +425,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -338,6 +438,7 @@
 		};
 		BDE6B091238E5FA90021D4AD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D430332213FBFCF4BE3BFAF9 /* Pods-BooleanExpressionEvaluation.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -362,6 +463,7 @@
 		};
 		BDE6B092238E5FA90021D4AD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CAF7B2CD271FF08A313F3111 /* Pods-BooleanExpressionEvaluation.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -386,6 +488,7 @@
 		};
 		BDE6B094238E5FA90021D4AD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B52333DF56B2FF4E5D298E96 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -404,6 +507,7 @@
 		};
 		BDE6B095238E5FA90021D4AD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 94BD83E8359F4912E2F4F142 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

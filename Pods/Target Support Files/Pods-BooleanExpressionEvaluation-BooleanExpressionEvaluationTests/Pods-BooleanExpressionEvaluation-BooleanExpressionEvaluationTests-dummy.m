@@ -1,0 +1,5 @@
+#import <Foundation/Foundation.h>
+@interface PodsDummy_Pods_BooleanExpressionEvaluation_BooleanExpressionEvaluationTests : NSObject
+@end
+@implementation PodsDummy_Pods_BooleanExpressionEvaluation_BooleanExpressionEvaluationTests
+@end
