@@ -20,6 +20,7 @@
 
 import Foundation
 
+/// Represents a boolean expression as an array of `ExpressionElements`
 public typealias Expression = [ExpressionElement]
 
 public extension Expression {
