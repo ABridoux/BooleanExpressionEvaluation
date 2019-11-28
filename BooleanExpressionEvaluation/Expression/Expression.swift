@@ -25,6 +25,30 @@ public typealias Expression = [ExpressionElement]
 
 public extension Expression {
 
+    // MARK: - Properties
+
+    var description: String {
+        var description = ""
+
+        for element in self {
+            description.append(element.description)
+            if case ExpressionElement.bracket(.opening) = element {
+                // don't add space after opening bracket
+                continue
+            }
+            if case ExpressionElement.bracket(.closing) = element {
+                // remove prevoious space before
+                _ = description.popLast()
+            }
+            description.append(" ")
+        }
+        // remove last unwanted space
+        _ = description.popLast()
+        return description
+    }
+
+    // MARK: - Initialiation
+
     init(_ stringExpression: String) throws {
         var evaluatedExpression = [ExpressionElement]()
         for element in stringExpression.split(separator: " ") {
@@ -56,5 +80,12 @@ public extension Expression {
             throw ExpressionError.emptyExpression
         }
         self = evaluatedExpression
+    }
+
+    // MARK: - Functions
+
+    func evaluate(with variablesProvider: VariablesProvider) throws -> Bool {
+        var evaluator = ExpressionEvaluator(expression: self, variablesProvider: variablesProvider)
+        return try evaluator.evaluateExpression()
     }
 }
