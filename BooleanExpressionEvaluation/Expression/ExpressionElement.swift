@@ -17,15 +17,18 @@
     along with this program. If not, see https://www.gnu.org/licenses
     for more information.
 */
+
 import Foundation
 
 /// Represent an element in a boolean expression
-public enum ExpressionElement: Equatable, CustomStringConvertible {
+public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
 
     case comparisonOperator(ComparisonOperator)
     case logicOperator(LogicOperator)
     case bracket(Bracket)
     case operand(Operand)
+
+    // MARK: - Associated enums
 
     public enum ComparisonOperator: String {
         case equal = "=="
@@ -93,7 +96,8 @@ public enum ExpressionElement: Equatable, CustomStringConvertible {
         case boolean(Bool)
 
         init?(_ element: String) {
-            if element.first == "\"" && element.last == "\"" {
+            if element.first == "\"" && element.last == "\""
+            || element.first == "'" && element.last == "'" {
                 var string = element
                 string.removeFirst()
                 string.removeLast()
@@ -114,12 +118,25 @@ public enum ExpressionElement: Equatable, CustomStringConvertible {
         public var description: String {
             switch self {
             case .variable(let variableName): return variableName
-            case .string(let string): return  #""\#(string)""#
+            case .string(let string): return  "'\(string)'"
             case .number(let double): return double.description
             case .boolean(let boolean): return boolean.description
             }
         }
     }
+
+    // MARK: - Properties
+
+    public var description: String {
+        switch self {
+        case .comparisonOperator(let comparisonOperator): return comparisonOperator.rawValue
+        case .logicOperator(let logicOperator): return logicOperator.rawValue
+        case .bracket(let bracket): return bracket.rawValue
+        case .operand(let operand): return operand.description
+        }
+    }
+
+    // MARK: - Initialization
 
     init?(element: String) {
         if let comparisonOperator = ComparisonOperator(rawValue: element) {
@@ -135,12 +152,17 @@ public enum ExpressionElement: Equatable, CustomStringConvertible {
         }
     }
 
-    public var description: String {
-        switch self {
-        case .comparisonOperator(let comparisonOperator): return comparisonOperator.rawValue
-        case .logicOperator(let logicOperator): return logicOperator.rawValue
-        case .bracket(let bracket): return bracket.rawValue
-        case .operand(let operand): return operand.description
+    public init(from decoder: Decoder) throws {
+        let key = try decoder.singleValueContainer().decode(String.self)
+        if let value = ExpressionElement(element: key) {
+            self = value
+        } else {
+            throw ExpressionError.incorrectElement(key)
         }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(description)
     }
 }
