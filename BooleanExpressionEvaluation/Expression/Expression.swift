@@ -38,7 +38,7 @@ public struct Expression: Collection, Equatable {
     public var startIndex: Int { elements.startIndex }
     public var endIndex: Int { elements.endIndex }
 
-    var description: String {
+    public var description: String {
         var description = ""
 
         for element in elements {
