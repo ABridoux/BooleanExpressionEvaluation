@@ -20,7 +20,7 @@
 
 import Foundation
 
-public struct ExpressionEvaluator {
+struct ExpressionEvaluator {
 
     // MARK: - Properties
 
@@ -30,18 +30,18 @@ public struct ExpressionEvaluator {
 
     // MARK: - Init
 
-    public init(expression: Expression, variablesProvider: VariablesProvider) {
-        self.tokenizator = BooleanExpressionTokenizator(expression: expression, variablesProvider: variablesProvider)
+    init(expression: Expression, variables: [String: String]) {
+        self.tokenizator = BooleanExpressionTokenizator(expression: expression, variables: variables)
     }
 
-    public init?(string: String, variablesProvider: VariablesProvider) throws {
+    init?(string: String, variables: [String: String]) throws {
         let expression = try Expression(string)
-        self.init(expression: expression, variablesProvider: variablesProvider)
+        self.init(expression: expression, variables: variables)
     }
 
     // MARK: - Functions
 
-    public mutating func evaluateExpression() throws -> Bool {
+    mutating func evaluateExpression() throws -> Bool {
         // setting the current token to an opening bracket to avoid to have an optional
         currentOpenedBrackets = 0
 

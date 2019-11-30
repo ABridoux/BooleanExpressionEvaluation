@@ -40,4 +40,9 @@ extension NSRegularExpression {
         }
         return string.sliced(with: range)
     }
+
+    func matches(in string: String) -> [String] {
+        let matches = self.matches(in: string, options: [], range: NSRange(location: 0, length: string.count))
+        return matches.map { string.sliced(with: $0.range) }
+    }
 }
