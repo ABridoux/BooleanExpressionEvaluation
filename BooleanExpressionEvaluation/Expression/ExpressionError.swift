@@ -23,6 +23,8 @@ import Foundation
 public enum ExpressionError: Error, LocalizedError {
     /// General error for undefined errors
     case invalidExpression(String)
+    case invalidStringQuotation(String)
+    case invalidVariableName(String)
     case emptyExpression
     case undefinedVariable(String)
     case incorrectElement(String)
@@ -34,6 +36,8 @@ public enum ExpressionError: Error, LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .invalidExpression(let description): return description
+        case .invalidStringQuotation(let string): return "Invalid string quotation: \(string)"
+        case .invalidVariableName(let name): return "Invalid variable name or element: \(name). Variable name must start with a letter and can contains letters, numbers, - and _"
         case .emptyExpression: return "The expression should not be empty"
         case .undefinedVariable(let variable): return "Undefined variable: \(variable)"
         case .incorrectElement(let element): return "Incorrect element in the expression: \(element)"

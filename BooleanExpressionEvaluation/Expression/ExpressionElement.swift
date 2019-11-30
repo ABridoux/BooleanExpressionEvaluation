@@ -95,12 +95,14 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
         case number(Double)
         case boolean(Bool)
 
-        init?(_ element: String) {
-            if element.first == "\"" && element.last == "\""
-            || element.first == "'" && element.last == "'" {
+        init(_ element: String) throws {
+            if element.first == "\"" && element.last == "\"" {
                 var string = element
                 string.removeFirst()
                 string.removeLast()
+                guard !string.contains("\"") else {
+                    throw ExpressionError.invalidStringQuotation(element)
+                }
                 self = .string(string)
             } else if let double = Double(element) {
                 self = .number(double)
@@ -109,7 +111,7 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
             } else {
                 guard let regex = try? NSRegularExpression(pattern: "[a-zA-Z]{1}[a-zA-Z0-9_-]*", options: []),
                 regex.matchFoundIn(element) else {
-                    return nil
+                    throw ExpressionError.invalidVariableName(element)
                 }
                 self = .variable(element)
             }
@@ -138,27 +140,21 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
 
     // MARK: - Initialization
 
-    init?(element: String) {
+    init(element: String) throws {
         if let comparisonOperator = ComparisonOperator(rawValue: element) {
             self = .comparisonOperator(comparisonOperator)
         } else if let logicOperator = LogicOperator(rawValue: element) {
             self = .logicOperator(logicOperator)
         } else if let bracket = Bracket(rawValue: element) {
             self = .bracket(bracket)
-        } else if let operand = Operand(element) {
-            self = .operand(operand)
         } else {
-            return nil
+            self = .operand(try Operand(element))
         }
     }
 
     public init(from decoder: Decoder) throws {
         let key = try decoder.singleValueContainer().decode(String.self)
-        if let value = ExpressionElement(element: key) {
-            self = value
-        } else {
-            throw ExpressionError.incorrectElement(key)
-        }
+        self = try ExpressionElement(element: key)
     }
 
     public func encode(to encoder: Encoder) throws {

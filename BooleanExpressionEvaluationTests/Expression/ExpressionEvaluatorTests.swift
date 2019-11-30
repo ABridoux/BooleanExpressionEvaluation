@@ -27,17 +27,16 @@ class ExpressionEvaluatorTests: XCTestCase {
 
     let stubExpression: Expression = [.operand(.number(1))]
     var sut: ExpressionEvaluator!
-    var variablesProviderMock: VariablesProviderMock!
+    var variables = [String: String]()
 
-    // MARK: Setup and Teardown
+    // MARK: - Setup and Teardown
 
     override func setUp() {
-        variablesProviderMock = VariablesProviderMock()
-        sut = ExpressionEvaluator(expression: stubExpression, variablesProvider: variablesProviderMock)
+        sut = ExpressionEvaluator(expression: stubExpression, variables: variables)
     }
 
     override func tearDown() {
-        variablesProviderMock = nil
+        variables.removeAll()
         sut = nil
     }
 
@@ -110,9 +109,9 @@ class ExpressionEvaluatorTests: XCTestCase {
     // MARK: Evaluate expression - Integration tests
 
     func testEvaluateExpression1() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi, Loulou"
+        variables["variable"] = "1"
+        variables["isCheck"] = "false"
+        variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
@@ -122,7 +121,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                         .logicOperator(.or),
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
 
-        var sut = ExpressionEvaluator(expression: expression, variablesProvider: variablesProviderMock)
+        var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
         do {
             let result = try sut.evaluateExpression()
@@ -133,9 +132,9 @@ class ExpressionEvaluatorTests: XCTestCase {
     }
 
     func testEvaluateExpression2_UnbalancedBracket() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi, Loulou"
+        variables["variable"] = "1"
+        variables["isCheck"] = "false"
+        variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [  .operand(.variable("variable")), .comparisonOperator(.lesserThanOrEqual), .operand(.number(1.5)),
                                       .logicOperator(.and),
@@ -144,7 +143,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                         .logicOperator(.or),
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
 
-        var sut = ExpressionEvaluator(expression: expression, variablesProvider: variablesProviderMock)
+        var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
         do {
             _ = try sut.evaluateExpression()
@@ -158,9 +157,9 @@ class ExpressionEvaluatorTests: XCTestCase {
     }
 
     func testEvaluateExpression2_UndefinedVariable() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi, Loulou"
+        variables["variable"] = "1"
+        variables["isCheck"] = "false"
+        variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [  .operand(.variable("variable")), .comparisonOperator(.lesserThanOrEqual), .operand(.number(1.5)),
                                       .logicOperator(.and),
@@ -168,7 +167,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                         .logicOperator(.or),
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.variable("Fifi"))]
 
-        var sut = ExpressionEvaluator(expression: expression, variablesProvider: variablesProviderMock)
+        var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
         do {
             let result = try sut.evaluateExpression()
@@ -179,9 +178,9 @@ class ExpressionEvaluatorTests: XCTestCase {
     }
 
     func testEvaluateExpression2_UselessBrackets1() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi, Loulou"
+        variables["variable"] = "1"
+        variables["isCheck"] = "false"
+        variables["Ducks"] = "Riri, Fifi, Loulou"
 
          let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
@@ -193,7 +192,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                         .bracket(.closing),
                                         .bracket(.closing)]
 
-        var sut = ExpressionEvaluator(expression: expression, variablesProvider: variablesProviderMock)
+        var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
         do {
             let result = try sut.evaluateExpression()
@@ -204,9 +203,9 @@ class ExpressionEvaluatorTests: XCTestCase {
     }
 
     func testEvaluateExpression2_UselessBrackets2() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi, Loulou"
+        variables["variable"] = "1"
+        variables["isCheck"] = "false"
+        variables["Ducks"] = "Riri, Fifi, Loulou"
 
          let expression: Expression = [.bracket(.opening), .bracket(.opening), .bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
@@ -216,7 +215,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),
                                         .bracket(.closing), .bracket(.closing), .bracket(.closing)]
 
-        var sut = ExpressionEvaluator(expression: expression, variablesProvider: variablesProviderMock)
+        var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
         do {
             let result = try sut.evaluateExpression()
@@ -227,9 +226,9 @@ class ExpressionEvaluatorTests: XCTestCase {
     }
 
     func testEvaluateExpression2_DebtTrueOr() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi, Loulou"
+        variables["variable"] = "1"
+        variables["isCheck"] = "false"
+        variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [.operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(0.5)),
                                       .logicOperator(.or),
@@ -237,72 +236,11 @@ class ExpressionEvaluatorTests: XCTestCase {
                                       .logicOperator(.and),
                                       .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),]
 
-        var sut = ExpressionEvaluator(expression: expression, variablesProvider: variablesProviderMock)
+        var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
         do {
             let result = try sut.evaluateExpression()
             XCTAssertTrue(result)
-        } catch {
-            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
-        }
-    }
-
-    // MARK: Evaluate strings - Integration tests
-
-    func testEvaluateString1() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi, Loulou"
-        let expressionString = #"(variable == 1 && isCheck == false) || Ducks :: "Fifi""#
-
-        guard var sut = try? ExpressionEvaluator(string: expressionString, variablesProvider: variablesProviderMock) else {
-            XCTFail("Unable to init an ExpressionEvaluator from this expression: \(expressionString)")
-            return
-        }
-
-        do {
-            let result = try sut.evaluateExpression()
-            XCTAssertTrue(result)
-        } catch {
-            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
-        }
-    }
-
-    func testEvaluateString2() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi,  Loulou"
-        variablesProviderMock.variables["duck"] = "Riri"
-        let expressionString = #"variable == 1 || isCheck == true && Ducks :: duck"#
-
-        guard var sut = try? ExpressionEvaluator(string: expressionString, variablesProvider: variablesProviderMock) else {
-            XCTFail("Unable to init an ExpressionEvaluator from this expression: \(expressionString)")
-            return
-        }
-
-        do {
-            let result = try sut.evaluateExpression()
-            XCTAssertTrue(result)
-        } catch {
-            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
-        }
-    }
-
-    func testEvaluateString_WtihDebt() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi,  Loulou"
-        variablesProviderMock.variables["duck"] = "Riri"
-        let expressionString = #"variable != 1 || isCheck != true && Ducks :: duck"#
-
-        guard var sut = try? ExpressionEvaluator(string: expressionString, variablesProvider: variablesProviderMock) else {
-            XCTFail("Unable to init an ExpressionEvaluator from this expression: \(expressionString)")
-            return
-        }
-
-        do {
-            let result = try sut.evaluateExpression()
-            XCTAssertFalse(result)
         } catch {
             XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
         }
