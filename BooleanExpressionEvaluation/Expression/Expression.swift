@@ -138,7 +138,7 @@ public struct Expression: Collection, Equatable {
 
     // MARK: Evaluation
 
-    func evaluate(with variables: [String: String]) throws -> Bool {
+    public func evaluate(with variables: [String: String]) throws -> Bool {
         var evaluator = ExpressionEvaluator(expression: self, variables: variables)
         return try evaluator.evaluateExpression()
     }
