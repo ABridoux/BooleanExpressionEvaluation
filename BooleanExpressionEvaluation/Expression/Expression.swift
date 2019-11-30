@@ -71,7 +71,7 @@ public struct Expression: Collection, Equatable {
 
     // MARK: - Initialiation
 
-    init(_ stringExpression: String) throws {
+    public init(_ stringExpression: String) throws {
         // split the string expression
         let regex = try NSRegularExpression(pattern: #"(?<=\s|^)(\#(regexGeneralPattern)|\#(stringRegexlPattern))(?=\s|$)"#, options: [])
         let stringElements = regex.matches(in: stringExpression)
@@ -107,7 +107,7 @@ public struct Expression: Collection, Equatable {
         elements = evaluatedExpression
     }
 
-    init(_ elements: ArrayType) {
+    public init(_ elements: ArrayType) {
         self.elements = elements
     }
 
