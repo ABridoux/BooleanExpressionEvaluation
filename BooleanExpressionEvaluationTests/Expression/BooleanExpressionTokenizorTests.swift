@@ -31,19 +31,18 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     var stubExpression: Expression!
 
     var sut: BooleanExpressionTokenizator!
-    var variablesProviderMock: VariablesProviderMock!
+    var variables = [String: String]()
 
     // MARK: - Setup & Teardown
 
     override func setUp() {
         stubExpression = [.operand(stubVariable), .comparisonOperator(stubComparisonOperator), .operand(stubNumber)]
-        variablesProviderMock = VariablesProviderMock()
-        variablesProviderMock.variables["variable"] = "2"
-        sut = BooleanExpressionTokenizator(expression: stubExpression, variablesProvider: variablesProviderMock)
+        variables["variable"] = "2"
+        sut = BooleanExpressionTokenizator(expression: stubExpression, variables: variables)
     }
 
     override func tearDown() {
-        variablesProviderMock = nil
+        variables.removeAll()
         sut = nil
     }
 
@@ -115,67 +114,82 @@ class BooleanExpressionTokenizorTests: XCTestCase {
         }
     }
 
-    // MARK: Tokenization - Integration tests
-
-    func testTokenization1() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "true"
-        variablesProviderMock.variables["input"] = "Test"
-
-        let expression: Expression = [.bracket(.opening),
-                                            .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
-                                            .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                        .bracket(.closing),
-                                        .logicOperator(.or),
-                                            .operand(.variable("input")), .comparisonOperator(.equal), .operand(.string("Test"))]
-        let expectedTokenizedExpression: Expression = [.bracket(.opening),
-                                                            .operand(.boolean(false)),
-                                                      .logicOperator(.and),
-                                                            .operand(.boolean(true)),
-                                                        .bracket(.closing),
-                                                        .logicOperator(.or),
-                                                            .operand(.boolean(true))]
-        var sut = BooleanExpressionTokenizator(expression: expression, variablesProvider: variablesProviderMock)
-
-        var tokenizedExpression = Expression()
-        while let token = try? sut.nextToken() {
-            tokenizedExpression.append(token)
-        }
-
-        XCTAssertEqual(tokenizedExpression, expectedTokenizedExpression)
-    }
-
-    func testTokenization2() {
-        variablesProviderMock.variables["variable"] = "1"
-        variablesProviderMock.variables["isCheck"] = "false"
-        variablesProviderMock.variables["Ducks"] = "Riri, Fifi, Loulou"
-
-        let expression: Expression = [.bracket(.opening),
-                                            .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
-                                            .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                        .bracket(.closing),
-                                        .logicOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
-        let expectedTokenizdExpression: Expression = [.bracket(.opening),
-                                                            .operand(.boolean(false)),
-                                                      .logicOperator(.and),
-                                                            .operand(.boolean(false)),
-                                                        .bracket(.closing),
-                                                        .logicOperator(.or),
-                                                            .operand(.boolean(true))]
-        var sut = BooleanExpressionTokenizator(expression: expression, variablesProvider: variablesProviderMock)
-
-        var tokenizedExpression = Expression()
-        while let token = try? sut.nextToken() {
-            tokenizedExpression.append(token)
-        }
-
-        XCTAssertEqual(tokenizedExpression, expectedTokenizdExpression)
-    }
-
     // MARK: Evaluation
+
+    func testEvaluateSingleBooleanExpression_ThrowsIfCountNot1() {
+        let expression: Expression = [.operand(.variable("variable")), .comparisonOperator(.equal), .operand(.boolean(true))]
+        XCTAssertThrowsError(try sut.evaluate(singleBooleanExpression: expression), "") { error in
+            guard case ExpressionError.invalidGrammar = error else {
+                XCTFail("Trying to evaluate a single boolean expression with more than 3 elements should throw the error ExpressionElement.incorrectGrammar")
+                return
+            }
+        }
+    }
+
+    func testEvaluateSingleBooleanExpression_ThrowsIfNoVariableAsOperand() {
+        let expression: Expression = [.operand(.boolean(true))]
+        XCTAssertThrowsError(try sut.evaluate(singleBooleanExpression: expression), "") { error in
+            guard case ExpressionError.invalidGrammar = error else {
+                XCTFail("Trying to evaluate a single boolean expression with no undefined variable should throw the error ExpressionElement.undefinedVariable")
+                return
+            }
+        }
+    }
+
+    func testEvaluateSingleBooleanExpression_ThrowsIfUndefinedVariable() {
+        sut.variables.removeAll()
+        let expression: Expression = [.operand(.variable("variable"))]
+        XCTAssertThrowsError(try sut.evaluate(singleBooleanExpression: expression), "") { error in
+            guard case ExpressionError.undefinedVariable = error else {
+                XCTFail("Trying to evaluate a single boolean expression with no variable operand should throw the error ExpressionElement.undefinedVariable")
+                return
+            }
+        }
+    }
+
+    func testEvaluateSingleBooleanExpression_ThrowsIfVariableWithNoBooleanValue1() {
+        sut.variables["variable"] = "1.5"
+        let expression: Expression = [.operand(.variable("variable"))]
+        XCTAssertThrowsError(try sut.evaluate(singleBooleanExpression: expression), "") { error in
+            guard case ExpressionError.invalidGrammar = error else {
+                XCTFail("Trying to evaluate a single boolean expression with no boolean variable should throw the error ExpressionElement.invalidGrammar")
+                return
+            }
+        }
+    }
+
+    func testEvaluateSingleBooleanExpression_ThrowsIfVariableWithNoBooleanValue2() {
+        sut.variables["variable"] = "Hello"
+        let expression: Expression = [.operand(.variable("variable"))]
+        XCTAssertThrowsError(try sut.evaluate(singleBooleanExpression: expression), "") { error in
+            guard case ExpressionError.invalidGrammar = error else {
+                XCTFail("Trying to evaluate a single boolean expression with no boolean variable should throw the error ExpressionElement.invalidGrammar")
+                return
+            }
+        }
+    }
+
+    func testEvaluateSingleBooleanExpression_True() {
+        sut.variables["variable"] = "true"
+        let expression: Expression = [.operand(.variable("variable"))]
+        do {
+            let result = try sut.evaluate(singleBooleanExpression: expression)
+            XCTAssertTrue(result)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testEvaluateSingleBooleanExpression_False() {
+        sut.variables["variable"] = "false"
+        let expression: Expression = [.operand(.variable("variable"))]
+        do {
+            let result = try sut.evaluate(singleBooleanExpression: expression)
+            XCTAssertFalse(result)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
 
     func testEvaluateComparison_ThrowsErrorIfCountLesserThanThanThree() {
         do {
@@ -237,15 +251,18 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     }
 
     func testEvaluateComparison_EqualString() {
-        variablesProviderMock.variables["variable"] = "Hello"
+        sut.variables["variable"] = "Hello"
 
-        let result = try? sut.evaluateCleanComparison(.variable("variable"), .equal, .string("Hello"))
-
-        XCTAssertEqual(result, true)
+        do {
+            let result = try sut.evaluateCleanComparison(.variable("variable"), .equal, .string("Hello"))
+            XCTAssertEqual(result, true)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
     }
 
     func testEvaluateComparison_EqualNumber() {
-        variablesProviderMock.variables["variable"] = "2.5"
+        sut.variables["variable"] = "2.5"
 
         let result = try? sut.evaluateCleanComparison(.variable("variable"), .equal, .number(2.5))
 
@@ -253,7 +270,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     }
 
     func testEvaluateComparison_EqualBoolean() {
-        variablesProviderMock.variables["variable"] = "true"
+        sut.variables["variable"] = "true"
 
         let result = try? sut.evaluateCleanComparison(.variable("variable"), .equal, .boolean(true))
 
@@ -261,7 +278,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     }
 
     func testEvaluateComparison_GreaterNumber() {
-        variablesProviderMock.variables["variable"] = "2.5"
+        sut.variables["variable"] = "2.5"
 
         let result = try? sut.evaluateCleanComparison(.variable("variable"), .greaterThan, .number(2.0))
 
@@ -269,7 +286,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     }
 
     func testEvaluateComparison_LesserNumber() {
-        variablesProviderMock.variables["variable"] = "2.5"
+        sut.variables["variable"] = "2.5"
 
         let result = try? sut.evaluateCleanComparison(.variable("variable"), .greaterThan, .number(2.0))
 
@@ -277,7 +294,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     }
 
     func testEvaluateComparison_GreaterOrEqualNumber() {
-        variablesProviderMock.variables["variable"] = "2.5"
+        sut.variables["variable"] = "2.5"
 
         let result = try? sut.evaluateCleanComparison(.variable("variable"), .greaterThanOrEqual, .number(4))
 
@@ -285,7 +302,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     }
 
     func testEvaluateComparison_LesserOrEqualNumber() {
-        variablesProviderMock.variables["variable"] = "2.5"
+        sut.variables["variable"] = "2.5"
 
         let result = try? sut.evaluateCleanComparison(.variable("variable"), .lesserThanOrEqual, .number(4))
 

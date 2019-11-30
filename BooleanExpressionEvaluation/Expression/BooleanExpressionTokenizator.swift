@@ -30,13 +30,20 @@ struct BooleanExpressionTokenizator {
 
     var expression: Expression
     var currentToken = ExpressionElement.logicOperator(.or)
-    var variablesProvider: VariablesProvider
+
+    /// Stores the variables which are present present in the expression
+    var variables: [String: String]
 
     // MARK: - Init
 
-    init(expression: Expression, variablesProvider: VariablesProvider) {
+    /**
+     - Parameters:
+        - expression: The expression to tokenize
+        - variables: Variables which arepresent in the expression
+     */
+    init(expression: Expression, variables: [String: String]) {
         self.expression = expression
-        self.variablesProvider = variablesProvider
+        self.variables = variables
     }
 
     // MARK: - Functions
@@ -91,11 +98,11 @@ struct BooleanExpressionTokenizator {
             return nextElement
         }
         // try to get an expression from the next three elements (only a comparison expression can follow an operator or an opening bracket)
-        let comparisonExpression = [nextElement, expression.popFirst(), expression.popFirst()].compactMap({ $0 })
+        let comparisonExpression = [nextElement, expression.popFirst(), expression.popFirst()].compactMap { $0 }
         guard !comparisonExpression.isEmpty else {
             throw ExpressionError.invalidGrammar("Only a comparison expression can follow a \(currentToken.description)")
         }
-        let result = try evaluate(comparison: comparisonExpression)
+        let result = try evaluate(comparison: Expression(comparisonExpression)) // using .map seems to prevent to initialize the Expression as an array literal
         return .operand(.boolean(result))
     }
 
@@ -121,6 +128,11 @@ struct BooleanExpressionTokenizator {
      the need of a computer, since with only take care of boolean expressions
      */
     func evaluate(comparison expression: Expression) throws -> Bool {
+        if expression.count != 3 {
+            // try to evaluate a single boolean variable like isUserLoggedIn
+            return try evaluate(singleBooleanExpression: expression)
+        }
+
         guard expression.count == 3 else {
             throw ExpressionError.invalidExpression("Trying to evaluate a comparison which has not exactly three elements")
         }
@@ -145,6 +157,22 @@ struct BooleanExpressionTokenizator {
         throw ExpressionError.invalidExpression("Trying to evaluate a comparison which doesn't have at least one variable for operand")
     }
 
+    func evaluate(singleBooleanExpression expression: Expression) throws -> Bool {
+        guard expression.count == 1 else {
+            throw ExpressionError.invalidGrammar("Single boolean expression with more than two elements: \(expression.description)")
+        }
+        guard case let ExpressionElement.operand(.variable(variableName)) = expression[0] else {
+            throw ExpressionError.invalidGrammar("Trying to evaluate a single element which is not a variable: \(expression.description)")
+        }
+        guard let variableValue = variables[variableName] else {
+            throw ExpressionError.undefinedVariable(variableName)
+        }
+        guard let boolean = Bool(variableValue) else {
+            throw ExpressionError.invalidGrammar("Trying to evaluate a single variable which has not a boolean value: \(expression.description)")
+        }
+        return boolean
+    }
+
     /**
      Evaluate a comparison expression which has passed the check. This function should not be called directly
      */
@@ -157,7 +185,7 @@ struct BooleanExpressionTokenizator {
             throw ExpressionError.invalidExpression("Internal error: \(description)")
         }
 
-        guard let variableValue = variablesProvider.variables[variableName] else {
+        guard let variableValue = variables[variableName] else {
             throw ExpressionError.undefinedVariable(variableName)
         }
 
@@ -181,7 +209,7 @@ struct BooleanExpressionTokenizator {
             result = comparisonOperator.evaluate(booleanVariableValue, boolean)
 
         case .variable(let rightVariableName):
-            guard let rightVariableValue = variablesProvider.variables[rightVariableName] else { return false }
+            guard let rightVariableValue = variables[rightVariableName] else { return false }
             result = try evaluate(leftVariableValue: variableValue, comparisonOperator: comparisonOperator, rightVariableValue: rightVariableValue)
         }
 

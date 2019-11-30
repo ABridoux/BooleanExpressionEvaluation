@@ -21,16 +21,27 @@
 import Foundation
 
 /// Represents a boolean expression as an array of `ExpressionElements`
-public typealias Expression = [ExpressionElement]
+public struct Expression: Collection, Equatable {
 
-public extension Expression {
+    public typealias Element = ExpressionElement
+    public typealias ArrayType = [ExpressionElement]
+
+    // MARK: - Constants
+
+    let regexGeneralPattern = #"[a-zA-Z0-9&\.\|()!_=<>:-]+"#
+    let stringRegexlPattern = #"".*""#
 
     // MARK: - Properties
+
+    private var elements = ArrayType()
+
+    public var startIndex: Int { elements.startIndex }
+    public var endIndex: Int { elements.endIndex }
 
     var description: String {
         var description = ""
 
-        for element in self {
+        for element in elements {
             description.append(element.description)
             if case ExpressionElement.bracket(.opening) = element {
                 // don't add space after opening bracket
@@ -47,11 +58,27 @@ public extension Expression {
         return description
     }
 
+    /// The variables involved the the expression
+    public var variables: Set<String> {
+        var variableNames = Set<String>()
+        for element in self {
+            if case let ExpressionElement.operand(.variable(name)) = element {
+                variableNames.insert(name)
+            }
+        }
+        return variableNames
+    }
+
     // MARK: - Initialiation
 
     init(_ stringExpression: String) throws {
+        // split the string expression
+        let regex = try NSRegularExpression(pattern: #"(?<=\s|^)(\#(regexGeneralPattern)|\#(stringRegexlPattern))(?=\s|$)"#, options: [])
+        let stringElements = regex.matches(in: stringExpression)
+
         var evaluatedExpression = [ExpressionElement]()
-        for element in stringExpression.split(separator: " ") {
+
+        for element in stringElements {
             // remove the bracket if present as a prefix or suffiix of the element as they are authorized to be written without spacing
             var addClosingBracket = false
             var elementWithoutBrackets = String(element)
@@ -66,11 +93,8 @@ public extension Expression {
                 elementWithoutBrackets.removeLast()
             }
 
-            if let element = ExpressionElement(element: elementWithoutBrackets) {
-                evaluatedExpression.append(element)
-            } else {
-                throw ExpressionError.incorrectElement(elementWithoutBrackets)
-            }
+            let element = try ExpressionElement(element: elementWithoutBrackets)
+            evaluatedExpression.append(element)
 
             if addClosingBracket {
                 evaluatedExpression.append(.bracket(.closing))
@@ -79,13 +103,63 @@ public extension Expression {
         guard !evaluatedExpression.isEmpty else {
             throw ExpressionError.emptyExpression
         }
-        self = evaluatedExpression
+
+        elements = evaluatedExpression
+    }
+
+    init(_ elements: ArrayType) {
+        self.elements = elements
     }
 
     // MARK: - Functions
 
-    func evaluate(with variablesProvider: VariablesProvider) throws -> Bool {
-        var evaluator = ExpressionEvaluator(expression: self, variablesProvider: variablesProvider)
+    // MARK: Collection
+
+    public func index(after i: Int) -> Int {
+        return elements.index(after: i)
+    }
+
+    public subscript(elementIndex: Int) -> ExpressionElement {
+        assert(elementIndex >= startIndex && elementIndex <= endIndex)
+        return elements[elementIndex]
+    }
+
+    mutating func append(_ element: ExpressionElement) {
+        elements.append(element)
+    }
+
+    mutating func popFirst() -> ExpressionElement? {
+        if let firstElement = elements.first {
+            elements.removeFirst()
+            return firstElement
+        }
+        return nil
+    }
+
+    // MARK: Evaluation
+
+    func evaluate(with variables: [String: String]) throws -> Bool {
+        var evaluator = ExpressionEvaluator(expression: self, variables: variables)
         return try evaluator.evaluateExpression()
+    }
+}
+
+extension Expression: ExpressibleByArrayLiteral {
+    public typealias ArrayLiteralElement = ExpressionElement
+
+    public init(arrayLiteral elements: ExpressionElement...) {
+        self.elements = elements
+    }
+}
+
+extension Expression: Codable {
+    public init(from decoder: Decoder) throws {
+        let stringExpression = try decoder.singleValueContainer().decode(String.self)
+        try self.init(stringExpression)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.description)
     }
 }

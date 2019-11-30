@@ -24,35 +24,70 @@ import XCTest
 class ExpressionElementTests: XCTestCase {
 
     func testInitOperand_String() {
-        XCTAssertEqual(ExpressionElement.Operand(#""StringValue""#), ExpressionElement.Operand.string("StringValue"))
+        do {
+            let element = try ExpressionElement.Operand(#""StringValue""#)
+            XCTAssertEqual(element, ExpressionElement.Operand.string("StringValue"))
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
     }
 
     func testInitOperand_NumberInt() {
-        XCTAssertEqual(ExpressionElement.Operand("2"), ExpressionElement.Operand.number(2))
+        do {
+            let element = try ExpressionElement.Operand("2")
+            XCTAssertEqual(element, ExpressionElement.Operand.number(2))
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
     }
 
     func testInitOperand_NumberDouble() {
-        XCTAssertEqual(ExpressionElement.Operand("2.45"), .number(2.45))
+        do {
+            let element = try ExpressionElement.Operand("2.45")
+            XCTAssertEqual(element, .number(2.45))
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
     }
 
     func testInitOperand_Bool() {
-        XCTAssertEqual(ExpressionElement.Operand("true"), ExpressionElement.Operand.boolean(true))
-        XCTAssertEqual(ExpressionElement.Operand("false"), ExpressionElement.Operand.boolean(false))
+        XCTAssertEqual(try? ExpressionElement.Operand("true"), ExpressionElement.Operand.boolean(true))
+        XCTAssertEqual(try? ExpressionElement.Operand("false"), ExpressionElement.Operand.boolean(false))
     }
 
     func testInitOperand_Variable() {
-        XCTAssertEqual(ExpressionElement.Operand("User_input"), ExpressionElement.Operand.variable("User_input"))
+        do {
+            let element = try ExpressionElement.Operand("User_input")
+            XCTAssertEqual(element, ExpressionElement.Operand.variable("User_input"))
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
     }
 
     func testInitVariableFailsWithBracketPrefix() {
-        XCTAssertNil(ExpressionElement.Operand("(variable"))
+        XCTAssertThrowsError(try ExpressionElement.Operand("(variable"), "") { error in
+            guard case ExpressionError.invalidVariableName = error else {
+                XCTFail("Wrong variable name should throw ExpressionError.invalidVariableName")
+                return
+            }
+        }
     }
 
     func testInitVariableFailsWithBracketSuffix() {
-        XCTAssertNil(ExpressionElement.Operand("variable)"))
+        XCTAssertThrowsError(try ExpressionElement.Operand("variable)"), "") { error in
+            guard case ExpressionError.invalidVariableName = error else {
+                XCTFail("Wrong variable name should throw ExpressionError.invalidVariableName")
+                return
+            }
+        }
     }
 
     func testInitVariableFailsWithumberPrefix() {
-        XCTAssertNil(ExpressionElement.Operand("1variable"))
+        XCTAssertThrowsError(try ExpressionElement.Operand("1variable"), "") { error in
+            guard case ExpressionError.invalidVariableName = error else {
+                XCTFail("Wrong variable name should throw ExpressionError.invalidVariableName")
+                return
+            }
+        }
     }
 }
