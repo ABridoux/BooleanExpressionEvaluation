@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file. `BooleanExp
 
 ---
 
-## [1.1.0](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.1.1) (30/11/2019)
+## [1.1.2](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.1.2) (30/11/2019)
+
+### Hotfix
+- Mark `Expression.evaluatr()`  as `public`
+
+
+## [1.1.1](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.1.1) (30/11/2019)
 
 ### Hotfix
 - Mark `Expression` inits as `public`
