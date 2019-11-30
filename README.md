@@ -1,6 +1,6 @@
-#  About Expressions
+#  About boolean expressions
 
-This library is useful to evaluate a string expression like `variable1 >= 2 && variable2 = "Value"`. The variables are provided by an object implementing the `VariablesProvider` protocol, which only requires the object to be able to return an array of  `[String : String]` representing the variables and their values.
+This library is useful to evaluate a string expression like `variable1 >= 2 && variable2 = "Value"`. The variables are provided by a dictionary `[String : String]` representing the variables and their values.
 
 ## Requirements
 - Swift 5
@@ -14,31 +14,56 @@ To add the library to your projet, add the pod in your podfile:
 
 ## Evaluate a String
 
-To evaluate a String, create an `ExpresionEvaluator`, passing the string as the parameter of the init. Note that the initialisation can throw an error, as the string expression can contains incorrect elements. You can then call the `evaluateExpression` function of the evaluator. This function can also throw an error, as the expression can has an incorrect grammar.
+To evaluate a String, create an `Expression`, passing the string as the parameter of the init. Note that the initialisation can throw an error, as the string expression can contains incorrect elements. You can then call the `evaluate()` function of the expression. This function can also throw an error, as the expression can has an incorrect grammar.
 
 For example:
+(Note that the syntaxt `#""#` is used to allow the use of double quotes without quoting them with `\`)
 
 ```swift
-struct Variables: VariablesProvider {
-   var variables = ["userAge": "15", "userName": "Morty"]
-}
+let variables = ["userAge": "15", "userName": "Morty"]
 
-let expression = #"userAge > 10 && userName == "Morty""#
+let stringExpression = #"userAge > 10 && userName == "Morty""#
+let expression: Expression
 do {
-   let evaluator = try ExpressionEvaluator(string: expression, variablesProvider: Variables())
+    expression = try Expression(expression)
 } catch {
    // handle errors such as invalid elements in the expression
+   return
 }
 
 do {
-   let result = try evaluator.evaluateExpression()
+let result = try expression.evaluate(with: variables)
    print("The user is allowed to travel across dimensions: \(result)")
 } catch {
    // handle errors such as incorrect grammar in the expression
 }
 ```
 
-Note that the syntaxt `#""#` is used to allow the use of double quotes without quoting them with `\`
+You can also create the `Expression` and evaluate it in the same `do{} catch{}` statement:
+
+```
+let variables = ["userAge": "15", "userName": "Morty"]
+
+let stringExpression = #"userAge > 10 && userName == "Morty""#
+
+do {
+    let result = try Expression(expression).evaluate(with: variables)
+} catch {
+   // handle errors such as invalid elements or incorrect grammar in the expression
+   return
+}
+```
+
+Finally, a simple use case is to implement an extension of `Expression` when you always evaluate them with a single source of variables, like a `VariablesManager` singleton in your overall project.
+
+```
+extension Expression {
+    func evaluate() throws -> Bool {
+        return try evaluate(with: VariablesManager.shared.variables)
+    }
+}
+```
+
 
 ## Operators
 There are two types of operators available in an expression: comparison operators, to compare a variable and an other operand, and logic operators, to compare to boolean operands.
@@ -59,7 +84,7 @@ There are two types of operators available in an expression: comparison operator
 ## Operands
 
 You can compare a variable and an operand with a comparison operator. There are four types of operands.
-- `String` which are quoted
+- `String` which are quoted with double quotes only
 - `Number` which group all numeric values, including floating ones
 - `Boolean` which are written as *true* or *false*
 - `Variables` which have to begin by a letter (lower or upper case) and can contain scores `-` and underscores `_`. You can compare two variables.
@@ -80,7 +105,12 @@ Given the following variables, here are examples for each operator.
 - `(userAge < 400 && userName == "Gandalf) || fellowship :: "Aragorn"` → true
 
 ### Variables
-Variables are provided to the `ExpressionEvaluator` with an object implementing the `VariablesProvider` protocol. When comparing two operands with a comparison operator, one of the operands at least has to be a variable. Otherwise, the comparison expression result is already known and the expression do not need to be evaluated.
+Variables are provided to the `Expression` with an `[String: String]` dictionary. When comparing two operands with a comparison operator, one of the operands at least has to be a variable. Otherwise, the comparison expression result is already known and the expression do not need to be evaluated.
+
+A useful property of an `Expression` is `variables`, which is an array of the names of all the variables involved in the expression. 
+
+## Codable
+`Expression` implements the `Codable` protocol, and it is encoded/decoded as a `String`. Thus, you can try to decode a `String` value as an expression. And encoding it will render a `String`, describing it as a literal boolean expression. 
 
 ## Details about the internal logic
 
@@ -90,8 +120,11 @@ Represents an element of the expression, like  a variable, an operator or a numb
 - `ComparisonOperator` like `>` or `=`  to evaluate a comparison between a variable and an other operand
 - `LogicOperator` to evaluate a result with two booleans
 - `Brackets`
-- `Operands`  which always have an associated value, like a double or a boolean
-    
+- `Operands` which always have an associated value, like a double, a boolean, a string or a variable
+
+### `Expression`
+Act like an array of `ExpressionElement`, although it is a `struct` which implements the `Collection` protocol. 
+
 ### `BooleanExpressionTokenizator`
 
 Converts an expression which contains comparison expressions to a boolean expression, which contains only logic operators, boolean operands and brackets.
