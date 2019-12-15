@@ -1,8 +1,7 @@
 //
 //  GNU GPLv3
 //
-/*  Copyright © 2019-present Alexis Bridoux.
-
+/*
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -145,16 +144,7 @@ struct BooleanExpressionTokenizator {
         guard case let ExpressionElement.operand(rightOperand) = expression[2] else {
             throw ExpressionError.invalidExpression("Trying to evaluate a comparison which doesn't have a right operand")
         }
-
-        if case let ExpressionElement.operand(variable) = expression[0] {
-            return try evaluateCleanComparison(variable, comparisonOperator, rightOperand)
-        }
-        // || will not work with if case
-        if case let ExpressionElement.operand(variable) = expression[2] {
-            return try evaluateCleanComparison(variable, comparisonOperator, leftOperand)
-        }
-
-        throw ExpressionError.invalidExpression("Trying to evaluate a comparison which doesn't have at least one variable for operand")
+        return try evaluateCleanComparison(leftOperand, comparisonOperator, rightOperand)
     }
 
     func evaluate(singleBooleanExpression expression: Expression) throws -> Bool {
@@ -176,13 +166,26 @@ struct BooleanExpressionTokenizator {
     /**
      Evaluate a comparison expression which has passed the check. This function should not be called directly
      */
-    func evaluateCleanComparison(_ variable: ExpressionElement.Operand,
-                                 _ comparisonOperator: ExpressionElement.ComparisonOperator,
-                                 _ operandValue: ExpressionElement.Operand) throws -> Bool {
+    func evaluateCleanComparison(_ leftOperand: ExpressionElement.Operand,
+                                 _ comparisonOperator: Operator,
+                                 _ rightOperand: ExpressionElement.Operand) throws -> Bool {
 
-        guard case let ExpressionElement.Operand.variable(variableName) = variable else {
-            let description = "The left operand of the evaluateCleanComparison function should be a variable"
-            throw ExpressionError.invalidExpression("Internal error: \(description)")
+        // get the left or right variable value
+        let variableName: String
+        let isLeftOperandAVariable: Bool
+        var remainingOperand: ExpressionElement.Operand
+
+        if case let ExpressionElement.Operand.variable(name) = leftOperand {
+            variableName = name
+            isLeftOperandAVariable = true
+            remainingOperand = rightOperand
+        } else if case let ExpressionElement.Operand.variable(name) = rightOperand {
+            variableName = name
+            isLeftOperandAVariable = false
+            remainingOperand = leftOperand
+        } else {
+            let expressionDescription = "\(leftOperand.description) \(comparisonOperator.description), \(rightOperand.description)"
+            throw ExpressionError.invalidExpression("Trying to evaluate a comparison which doesn't have at least one variable for operand: \(expressionDescription)")
         }
 
         guard let variableValue = variables[variableName] else {
@@ -191,37 +194,37 @@ struct BooleanExpressionTokenizator {
 
         var result: Bool?
 
-        switch operandValue {
+        switch remainingOperand {
 
         case .string(let string):
-            result = comparisonOperator.evaluate(variableValue, string)
+            result = isLeftOperandAVariable ? comparisonOperator.evaluate(variableValue, string) : comparisonOperator.evaluate(string, variableValue)
 
         case .number(let double):
             guard let doubleVariableValue = Double(variableValue) else {
                 throw ExpressionError.mismatchingType
             }
-            result = comparisonOperator.evaluate(doubleVariableValue, double)
+            result = isLeftOperandAVariable ? comparisonOperator.evaluate(doubleVariableValue, double) : comparisonOperator.evaluate(double, doubleVariableValue)
 
         case .boolean(let boolean):
             guard let booleanVariableValue = Bool(variableValue) else {
                 throw ExpressionError.mismatchingType
             }
-            result = comparisonOperator.evaluate(booleanVariableValue, boolean)
+            result = isLeftOperandAVariable ? comparisonOperator.evaluate(booleanVariableValue, boolean) : comparisonOperator.evaluate(boolean, booleanVariableValue)
 
-        case .variable(let rightVariableName):
-            guard let rightVariableValue = variables[rightVariableName] else { return false }
-            result = try evaluate(leftVariableValue: variableValue, comparisonOperator: comparisonOperator, rightVariableValue: rightVariableValue)
+        case .variable(let otherVariableName):
+            guard let otherVariableValue = variables[otherVariableName] else { return false }
+            result = isLeftOperandAVariable ? try evaluate(leftVariableValue: variableValue, comparisonOperator: comparisonOperator, rightVariableValue: otherVariableValue)
+            : try evaluate(leftVariableValue: otherVariableValue, comparisonOperator: comparisonOperator, rightVariableValue: variableValue)
         }
 
-        if let unwrappedResult = result {
-            return unwrappedResult
-        } else {
+        guard let unwrappedResult = result else {
             throw ExpressionError.wrongOperatorAndOperandsAssociation
         }
+        return unwrappedResult
     }
 
     /// Helper to evaluate a comparison expression with two variables as operands
-    func evaluate(leftVariableValue: String, comparisonOperator: ExpressionElement.ComparisonOperator, rightVariableValue: String) throws -> Bool {
+    func evaluate(leftVariableValue: String, comparisonOperator: Operator, rightVariableValue: String) throws -> Bool {
         var result: Bool?
 
         if let leftDouble = Double(leftVariableValue), let rightDouble = Double(rightVariableValue) {

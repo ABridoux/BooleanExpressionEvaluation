@@ -1,8 +1,7 @@
 //
 //  GNU GPLv3
 //
-/*  Copyright © 2019-present Alexis Bridoux.
-
+/*
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -28,5 +27,16 @@ extension String {
         let sliceStartIndex = index(startIndex, offsetBy: range.location)
         let sliceEndIndex = index(startIndex, offsetBy: range.upperBound - 1)
         return String(self[sliceStartIndex...sliceEndIndex])
+    }
+
+    /// Quote the characters if necessary to be used in a regular expression
+    var quoted: String {
+        var quotedString = ""
+        forEach { character in
+            let character = String(character)
+            quotedString += NSRegularExpression.charactersToQuote.contains(character) ? "\\" : ""
+            quotedString += character
+        }
+        return quotedString
     }
 }

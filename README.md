@@ -77,11 +77,15 @@ There are two types of operators available in an expression: comparison operator
 - `>=` for *greater than or equal*
 - `<` for *lesser than*
 - `<=` for *lesser than or equal*
-- `::` for contains. The result is true is the left operand contains the right one. The left operand has to be filled with values separated by commas. For example: if the variable `Ducks` has "Riri, Fifi, Loulou" for value, the comparison `Ducks :: "Riri"` is evaluated as true.
+- `<:` for contains. The result is true is the left operand contains the right one. The left operand has to be filled with values separated by commas. For example: if the variable `Ducks` has "Riri, Fifi, Loulou" for value, the comparison `Ducks <: "Riri"` is evaluated as true.
 
 ### Logic operator
 - `&&` for *and*
 - `||` for *or*
+
+### Custom operators
+
+You can define cutom operators
 
 ## Operands
 
@@ -103,9 +107,9 @@ Given the following variables, here are examples for each operator.
 #### Expressions
 - `isUserAWizard == true && hobbit == "Bilbo"` → true
 - `userAge >= 400 || userName != "Saruman"` → true
-- `fellowship :: hobbit` → false
+- `fellowship <: hobbit` → false
 - `userAge < 400 && userName == "Gandalf"` → false
-- `(userAge < 400 && userName == "Gandalf) || fellowship :: "Aragorn"` → true
+- `(userAge < 400 && userName == "Gandalf) || fellowship <: "Aragorn"` → true
 - `isUserAWizard && passphrase == "You shall not pass!"` → true
 
 ### Variables

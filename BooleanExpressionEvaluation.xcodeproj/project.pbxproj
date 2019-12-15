@@ -9,10 +9,12 @@
 /* Begin PBXBuildFile section */
 		947EE15D0571A3374489233C /* libPods-BooleanExpressionEvaluation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C7655CBD995C3A4F7CD1FCF3 /* libPods-BooleanExpressionEvaluation.a */; };
 		AD146D593180F1A1120C3896 /* libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BC7E489E2F389D785B1599C0 /* libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a */; };
+		BD12A22423A66431003BC568 /* OperatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD12A22323A66431003BC568 /* OperatorProtocol.swift */; };
+		BD12A22623A66577003BC568 /* Operator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD12A22523A66577003BC568 /* Operator.swift */; };
+		BD12A22F23A6CC66003BC568 /* LogicOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD12A22E23A6CC66003BC568 /* LogicOperator.swift */; };
 		BDB6C4762392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6C4752392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift */; };
 		BDB6C4782392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6C4772392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift */; };
 		BDE6B086238E5FA90021D4AD /* BooleanExpressionEvaluation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDE6B07C238E5FA90021D4AD /* BooleanExpressionEvaluation.framework */; };
-		BDE6B08B238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */; };
 		BDE6B08D238E5FA90021D4AD /* BooleanExpressionEvaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = BDE6B07F238E5FA90021D4AD /* BooleanExpressionEvaluation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BDE6B0A3238E63710021D4AD /* ExpressionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B098238E63710021D4AD /* ExpressionError.swift */; };
 		BDE6B0A4238E63710021D4AD /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B099238E63710021D4AD /* Expression.swift */; };
@@ -43,13 +45,15 @@
 		94BD83E8359F4912E2F4F142 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.release.xcconfig"; path = "Target Support Files/Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests/Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.release.xcconfig"; sourceTree = "<group>"; };
 		B52333DF56B2FF4E5D298E96 /* Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.debug.xcconfig"; path = "Target Support Files/Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests/Pods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC7E489E2F389D785B1599C0 /* libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-BooleanExpressionEvaluation-BooleanExpressionEvaluationTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD12A22323A66431003BC568 /* OperatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorProtocol.swift; sourceTree = "<group>"; };
+		BD12A22523A66577003BC568 /* Operator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operator.swift; sourceTree = "<group>"; };
+		BD12A22E23A6CC66003BC568 /* LogicOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogicOperator.swift; sourceTree = "<group>"; };
 		BDB6C4752392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanExpressionTokenizorTestsIntegration.swift; sourceTree = "<group>"; };
 		BDB6C4772392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionEvaluatorTestsIntegration.swift; sourceTree = "<group>"; };
 		BDE6B07C238E5FA90021D4AD /* BooleanExpressionEvaluation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BooleanExpressionEvaluation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDE6B07F238E5FA90021D4AD /* BooleanExpressionEvaluation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BooleanExpressionEvaluation.h; sourceTree = "<group>"; };
 		BDE6B080238E5FA90021D4AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BDE6B085238E5FA90021D4AD /* BooleanExpressionEvaluationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BooleanExpressionEvaluationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanExpressionEvaluationTests.swift; sourceTree = "<group>"; };
 		BDE6B08C238E5FA90021D4AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BDE6B098238E63710021D4AD /* ExpressionError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpressionError.swift; sourceTree = "<group>"; };
 		BDE6B099238E63710021D4AD /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
@@ -101,6 +105,16 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		BD12A22923A668D5003BC568 /* Operator */ = {
+			isa = PBXGroup;
+			children = (
+				BD12A22323A66431003BC568 /* OperatorProtocol.swift */,
+				BD12A22523A66577003BC568 /* Operator.swift */,
+				BD12A22E23A6CC66003BC568 /* LogicOperator.swift */,
+			);
+			path = Operator;
+			sourceTree = "<group>";
+		};
 		BDE6B072238E5FA90021D4AD = {
 			isa = PBXGroup;
 			children = (
@@ -136,8 +150,6 @@
 			isa = PBXGroup;
 			children = (
 				BDE6B0AD238E638D0021D4AD /* Expression */,
-				BDE6B0B2238E638D0021D4AD /* Mocks */,
-				BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */,
 				BDE6B08C238E5FA90021D4AD /* Info.plist */,
 			);
 			path = BooleanExpressionEvaluationTests;
@@ -152,6 +164,7 @@
 				BDE6B09A238E63710021D4AD /* BooleanExpressionTokenizator.swift */,
 				BDE6B09C238E63710021D4AD /* HalfBooleanExpression.swift */,
 				BDE6B09D238E63710021D4AD /* ExpressionEvaluator.swift */,
+				BD12A22923A668D5003BC568 /* Operator */,
 			);
 			path = Expression;
 			sourceTree = "<group>";
@@ -177,13 +190,6 @@
 				BDE6B0B1238E638D0021D4AD /* ExpressionTests.swift */,
 			);
 			path = Expression;
-			sourceTree = "<group>";
-		};
-		BDE6B0B2238E638D0021D4AD /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Mocks;
 			sourceTree = "<group>";
 		};
 		EEA072F6128FA158FD24288C /* Frameworks */ = {
@@ -377,9 +383,12 @@
 				BDE6B0A7238E63710021D4AD /* HalfBooleanExpression.swift in Sources */,
 				BDE6B0A8238E63710021D4AD /* ExpressionEvaluator.swift in Sources */,
 				BDE6B0A6238E63710021D4AD /* ExpressionElement.swift in Sources */,
+				BD12A22F23A6CC66003BC568 /* LogicOperator.swift in Sources */,
 				BDE6B0A3238E63710021D4AD /* ExpressionError.swift in Sources */,
+				BD12A22623A66577003BC568 /* Operator.swift in Sources */,
 				BDE6B0AB238E63710021D4AD /* NSRegularExpressionExtension.swift in Sources */,
 				BDE6B0A9238E63710021D4AD /* ArrayExtension.swift in Sources */,
+				BD12A22423A66431003BC568 /* OperatorProtocol.swift in Sources */,
 				BDE6B0A5238E63710021D4AD /* BooleanExpressionTokenizator.swift in Sources */,
 				BDE6B0A4238E63710021D4AD /* Expression.swift in Sources */,
 			);
@@ -393,7 +402,6 @@
 				BDE6B0B4238E638D0021D4AD /* BooleanExpressionTokenizorTests.swift in Sources */,
 				BDE6B0B5238E638D0021D4AD /* ExpressionElementTests.swift in Sources */,
 				BDB6C4782392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift in Sources */,
-				BDE6B08B238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift in Sources */,
 				BDE6B0B6238E638D0021D4AD /* ExpressionEvaluatorTests.swift in Sources */,
 				BDB6C4762392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift in Sources */,
 			);

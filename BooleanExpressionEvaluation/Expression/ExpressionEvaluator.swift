@@ -1,8 +1,7 @@
 //
 //  GNU GPLv3
 //
-/*  Copyright © 2019-present Alexis Bridoux.
-
+/*
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -24,7 +23,7 @@ struct ExpressionEvaluator {
 
     // MARK: - Properties
 
-    var expressionResults = [[HalfBooleanExpression(boolean: .boolean(false), logicOperator: .or)]]
+    var expressionResults = [[HalfBooleanExpression(boolean: false, logicOperator: .or)]]
     var tokenizator: BooleanExpressionTokenizator
     var currentOpenedBrackets = 0
 
@@ -56,7 +55,7 @@ struct ExpressionEvaluator {
                 currentOpenedBrackets += 1
 
             case .operand(.boolean(let boolean)):
-                let halfBooleanExpression = HalfBooleanExpression(boolean: .boolean(boolean), logicOperator: nil)
+                let halfBooleanExpression = HalfBooleanExpression(boolean: boolean, logicOperator: nil)
                 expressionResults[currentOpenedBrackets].append(halfBooleanExpression)
 
             case .bracket(.closing):
@@ -73,9 +72,8 @@ struct ExpressionEvaluator {
         let flattenBooleanExpression = expressionResults[0]
 
         // get the final result
-        guard let finalResultBooleanElement = evaluate(booleanExpression: flattenBooleanExpression)?.boolean,
-            case let .boolean(finalResult) = finalResultBooleanElement else {
-                throw ExpressionError.invalidExpression("Unable to evaluate the final flatten expression: \(flattenBooleanExpression.description)")
+        guard let finalResult = evaluate(booleanExpression: flattenBooleanExpression)?.boolean else {
+            throw ExpressionError.invalidExpression("Unable to evaluate the final flatten expression: \(flattenBooleanExpression.description)")
         }
 
         return finalResult
@@ -83,7 +81,7 @@ struct ExpressionEvaluator {
 
     // MARK: Helpers
 
-    mutating func evaluateExpressionHandleToken(logicOperator: ExpressionElement.LogicOperator) throws {
+    mutating func evaluateExpressionHandleToken(logicOperator: LogicOperator) throws {
         guard let currentHalfBooleanExpression = expressionResults[currentOpenedBrackets].last,
             currentHalfBooleanExpression.logicOperator == nil else {
                 throw ExpressionError.invalidGrammar("Logic operator should follow a closing bracket or a comparison expression")

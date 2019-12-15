@@ -28,8 +28,17 @@ public struct Expression: Collection, Equatable {
 
     // MARK: - Constants
 
-    let regexGeneralPattern = #"[a-zA-Z0-9&\.\|()!_=<>:-]+"#
-    let stringRegexlPattern = #"".*""#
+    static let operatorsPattern = "[\(Operator.regexPattern)\(LogicOperator.regexPattern)]+"
+    static let operandsGeneralPattern = #"[a-zA-Z0-9()\._-]+"#
+    static let stringRegexPattern = #"".*""#
+    static let regexPattern: String = {
+        var regexPattern = #"(?<=\s|^)"#
+        regexPattern.append("(\(Self.operatorsPattern))")
+        regexPattern.append(#"|(\#(Self.operandsGeneralPattern))"#)
+        regexPattern.append(#"|(\#(Self.stringRegexPattern))"#)
+        regexPattern.append(#"(?=\s|$)"#)
+        return regexPattern
+    }()
 
     // MARK: - Properties
 
@@ -73,7 +82,7 @@ public struct Expression: Collection, Equatable {
 
     public init(_ stringExpression: String) throws {
         // split the string expression
-        let regex = try NSRegularExpression(pattern: #"(?<=\s|^)(\#(regexGeneralPattern)|\#(stringRegexlPattern))(?=\s|$)"#, options: [])
+        let regex = try NSRegularExpression(pattern: Self.regexPattern, options: [])
         let stringElements = regex.matches(in: stringExpression)
 
         var evaluatedExpression = [ExpressionElement]()
