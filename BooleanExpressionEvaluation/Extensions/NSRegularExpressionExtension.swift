@@ -1,8 +1,7 @@
 //
 //  GNU GPLv3
 //
-/*  Copyright © 2019-present Alexis Bridoux.
-
+/*
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -30,8 +29,10 @@ extension NSRegularExpression {
         return string.sliced(with: firstMatch.range) == string
     }
 
+    static var charactersToQuote: [String] { ["*", "?", "+", "[", "(", ")", "{", "}", "^", "$", "|", "\\", ".", "/", "="] }
+
     /**
-     - Parameter string: The string whre to look for a match
+     - Parameter string: The string in which to look for a match
      - Returns: The first string match found, if any
      */
     func firstMatchString(in string: String) -> String? {

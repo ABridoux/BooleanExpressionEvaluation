@@ -26,7 +26,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     // MARK: - Properties
 
     let stubVariable = ExpressionElement.Operand.variable("variable")
-    let stubComparisonOperator = ExpressionElement.ComparisonOperator.equal
+    let stubComparisonOperator = Operator.equal
     let stubNumber = ExpressionElement.Operand.number(2)
     var stubExpression: Expression!
 
@@ -191,6 +191,16 @@ class BooleanExpressionTokenizorTests: XCTestCase {
         }
     }
 
+    func testEvaluateComparison_RightVariable() {
+        sut.variables["variable"] = "2"
+       do {
+           let result = try sut.evaluate(comparison: [.operand(.number(3)), .comparisonOperator(.greaterThan), .operand(.variable("variable"))])
+           XCTAssertTrue(result)
+       } catch {
+           XCTFail(error.localizedDescription)
+       }
+    }
+
     func testEvaluateComparison_ThrowsErrorIfCountLesserThanThanThree() {
         do {
             _ = try sut.evaluate(comparison: [.operand(.variable("a")), .comparisonOperator(.equal)])
@@ -249,6 +259,8 @@ class BooleanExpressionTokenizorTests: XCTestCase {
            }
        }
     }
+
+    // MARK: Clean comparison evaluation
 
     func testEvaluateComparison_EqualString() {
         sut.variables["variable"] = "Hello"
@@ -309,8 +321,18 @@ class BooleanExpressionTokenizorTests: XCTestCase {
         XCTAssertEqual(result, true)
     }
 
-    func testEvaluateComparisonVariables_Contains() {
-        let result = try? sut.evaluate(leftVariableValue: "Riri, Fifi, Loulou", comparisonOperator: .contains, rightVariableValue: "Riri")
+    func testEvaluateComparison_ContainsLeftOperandVariable() {
+        sut.variables["ducks"] = "Riri, Fifi, Loulou"
+
+        let result = try? sut.evaluateCleanComparison(.variable("ducks"), .contains, .string("Riri"))
+
+        XCTAssertEqual(result, true)
+    }
+
+    func testEvaluateComparison_ContainsRightOperandVariable() {
+        sut.variables["duck"] = "Riri"
+
+        let result = try? sut.evaluateCleanComparison(.string("Riri, Fifi, Loulou"), .contains, .variable("duck"))
 
         XCTAssertEqual(result, true)
     }

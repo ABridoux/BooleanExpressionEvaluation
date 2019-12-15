@@ -45,14 +45,13 @@ class ExpressionEvaluatorTests: XCTestCase {
     // MARK: Evaluate boolean expression
 
     func testEvaluateBooleanExpression1() {
-        let booleanExpression = [HalfBooleanExpression(boolean: .boolean(true), logicOperator: .and),
-                                 HalfBooleanExpression(boolean: .boolean(false), logicOperator: .or),
-                                 HalfBooleanExpression(boolean: .boolean(false), logicOperator: nil)]
+        let booleanExpression = [HalfBooleanExpression(boolean: true, logicOperator: .and),
+                                 HalfBooleanExpression(boolean: false, logicOperator: .or),
+                                 HalfBooleanExpression(boolean: false, logicOperator: nil)]
 
         let result = sut.evaluate(booleanExpression: booleanExpression)
 
-        guard let resultBooleanElement = result?.boolean,
-            case let .boolean(booleanResult) = resultBooleanElement else {
+        guard let booleanResult = result?.boolean else {
             XCTFail("The boolean expression has not properly been evaluated")
             return
         }
@@ -60,14 +59,13 @@ class ExpressionEvaluatorTests: XCTestCase {
     }
 
     func testEvaluateBooleanExpression2() {
-        let booleanExpression = [HalfBooleanExpression(boolean: .boolean(true), logicOperator: .and),
-                                 HalfBooleanExpression(boolean: .boolean(true), logicOperator: .or),
-                                 HalfBooleanExpression(boolean: .boolean(false), logicOperator: nil)]
+        let booleanExpression = [HalfBooleanExpression(boolean: true, logicOperator: .and),
+                                 HalfBooleanExpression(boolean: true, logicOperator: .or),
+                                 HalfBooleanExpression(boolean: false, logicOperator: nil)]
 
         let result = sut.evaluate(booleanExpression: booleanExpression)
 
-        guard let resultBooleanElement = result?.boolean,
-            case let .boolean(booleanResult) = resultBooleanElement else {
+        guard let booleanResult = result?.boolean else {
             XCTFail("The boolean expression has not properly been evaluated")
             return
         }
@@ -75,31 +73,29 @@ class ExpressionEvaluatorTests: XCTestCase {
     }
 
     func testEvaluateBooleanExpression3() {
-        let booleanExpression = [HalfBooleanExpression(boolean: .boolean(false), logicOperator: .or),
-                                 HalfBooleanExpression(boolean: .boolean(true), logicOperator: .and),
-                                 HalfBooleanExpression(boolean: .boolean(true), logicOperator: nil)]
+        let booleanExpression = [HalfBooleanExpression(boolean: false, logicOperator: .or),
+                                 HalfBooleanExpression(boolean: true, logicOperator: .and),
+                                 HalfBooleanExpression(boolean: true, logicOperator: nil)]
 
         let result = sut.evaluate(booleanExpression: booleanExpression)
 
-        guard let resultBooleanElement = result?.boolean,
-            case let .boolean(booleanResult) = resultBooleanElement else {
-            XCTFail("The boolean expression has not properly been evaluated")
+        guard let booleanResult = result?.boolean else {
+            XCTFail("The boolean expression has nt properly beened")
             return
         }
         XCTAssertTrue(booleanResult)
     }
 
     func testEvaluateBooleanExpression4() {
-        let booleanExpression = [HalfBooleanExpression(boolean: .boolean(false), logicOperator: .or),
-                                 HalfBooleanExpression(boolean: .boolean(true), logicOperator: .and),
-                                 HalfBooleanExpression(boolean: .boolean(true), logicOperator: .and),
-                                 HalfBooleanExpression(boolean: .boolean(false), logicOperator: .or),
-                                 HalfBooleanExpression(boolean: .boolean(true), logicOperator: nil)]
+        let booleanExpression = [HalfBooleanExpression(boolean: false, logicOperator: .or),
+                                 HalfBooleanExpression(boolean: true, logicOperator: .and),
+                                 HalfBooleanExpression(boolean: true, logicOperator: .and),
+                                 HalfBooleanExpression(boolean: false, logicOperator: .or),
+                                 HalfBooleanExpression(boolean: true, logicOperator: nil)]
 
         let result = sut.evaluate(booleanExpression: booleanExpression)
 
-        guard let resultBooleanElement = result?.boolean,
-            case let .boolean(booleanResult) = resultBooleanElement else {
+        guard let booleanResult = result?.boolean else {
             XCTFail("The boolean expression has not properly been evaluated")
             return
         }
