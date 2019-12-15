@@ -15,7 +15,6 @@
 		BDB6C4762392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6C4752392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift */; };
 		BDB6C4782392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6C4772392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift */; };
 		BDE6B086238E5FA90021D4AD /* BooleanExpressionEvaluation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDE6B07C238E5FA90021D4AD /* BooleanExpressionEvaluation.framework */; };
-		BDE6B08B238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */; };
 		BDE6B08D238E5FA90021D4AD /* BooleanExpressionEvaluation.h in Headers */ = {isa = PBXBuildFile; fileRef = BDE6B07F238E5FA90021D4AD /* BooleanExpressionEvaluation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BDE6B0A3238E63710021D4AD /* ExpressionError.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B098238E63710021D4AD /* ExpressionError.swift */; };
 		BDE6B0A4238E63710021D4AD /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE6B099238E63710021D4AD /* Expression.swift */; };
@@ -55,7 +54,6 @@
 		BDE6B07F238E5FA90021D4AD /* BooleanExpressionEvaluation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BooleanExpressionEvaluation.h; sourceTree = "<group>"; };
 		BDE6B080238E5FA90021D4AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BDE6B085238E5FA90021D4AD /* BooleanExpressionEvaluationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BooleanExpressionEvaluationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanExpressionEvaluationTests.swift; sourceTree = "<group>"; };
 		BDE6B08C238E5FA90021D4AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BDE6B098238E63710021D4AD /* ExpressionError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpressionError.swift; sourceTree = "<group>"; };
 		BDE6B099238E63710021D4AD /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
@@ -152,8 +150,6 @@
 			isa = PBXGroup;
 			children = (
 				BDE6B0AD238E638D0021D4AD /* Expression */,
-				BDE6B0B2238E638D0021D4AD /* Mocks */,
-				BDE6B08A238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift */,
 				BDE6B08C238E5FA90021D4AD /* Info.plist */,
 			);
 			path = BooleanExpressionEvaluationTests;
@@ -194,13 +190,6 @@
 				BDE6B0B1238E638D0021D4AD /* ExpressionTests.swift */,
 			);
 			path = Expression;
-			sourceTree = "<group>";
-		};
-		BDE6B0B2238E638D0021D4AD /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Mocks;
 			sourceTree = "<group>";
 		};
 		EEA072F6128FA158FD24288C /* Frameworks */ = {
@@ -413,7 +402,6 @@
 				BDE6B0B4238E638D0021D4AD /* BooleanExpressionTokenizorTests.swift in Sources */,
 				BDE6B0B5238E638D0021D4AD /* ExpressionElementTests.swift in Sources */,
 				BDB6C4782392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift in Sources */,
-				BDE6B08B238E5FA90021D4AD /* BooleanExpressionEvaluationTests.swift in Sources */,
 				BDE6B0B6238E638D0021D4AD /* ExpressionEvaluatorTests.swift in Sources */,
 				BDB6C4762392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift in Sources */,
 			);

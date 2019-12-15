@@ -184,7 +184,8 @@ struct BooleanExpressionTokenizator {
             isLeftOperandAVariable = false
             remainigOperand = leftOperand
         } else {
-            throw ExpressionError.invalidExpression("Trying to evaluate a comparison which doesn't have at least one variable for operand")
+            let expressionDescription = "\(leftOperand.description) \(comparisonOperator.description), \(rightOperand.description)"
+            throw ExpressionError.invalidExpression("Trying to evaluate a comparison which doesn't have at least one variable for operand: \(expressionDescription)")
         }
 
         guard let variableValue = variables[variableName] else {

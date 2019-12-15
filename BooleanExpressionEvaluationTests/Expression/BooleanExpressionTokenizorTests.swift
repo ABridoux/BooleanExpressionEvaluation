@@ -54,10 +54,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
         sut.currentToken = .operand(.boolean(true))
         sut.expression = [.operand(.number(1))]
 
-        do {
-            _ = try sut.currentTokenBooleanValidate()
-            XCTFail("Chaining a boolean with something else than a logic operator or a closing bracket should throw the invalidExpression error")
-        } catch {
+        XCTAssertThrowsError(try sut.currentTokenBooleanValidate(), "") { error in
             guard case ExpressionError.invalidExpression(_) = error else {
                 XCTFail("Chaining a boolean with something else than a logic operator or a closing bracket should throw the invalidExpression error")
                 return
@@ -78,7 +75,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
             }
             XCTAssertTrue(result)
         } catch {
-            XCTFail("Unwtanded error: \(error.localizedDescription)")
+            XCTFail("Unwanted error: \(error.localizedDescription)")
         }
     }
 
@@ -202,9 +199,8 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     }
 
     func testEvaluateComparison_ThrowsErrorIfCountLesserThanThanThree() {
-        do {
-            _ = try sut.evaluate(comparison: [.operand(.variable("a")), .comparisonOperator(.equal)])
-        } catch {
+        let expression: Expression = [.operand(.variable("a")), .comparisonOperator(.equal)]
+        XCTAssertThrowsError(try sut.evaluate(comparison: expression), "") { error in
             guard error is ExpressionError else {
                 XCTFail("Trying to evaluate a comparison which have less than three elements should throw an ExpressionError")
                 return
@@ -213,54 +209,57 @@ class BooleanExpressionTokenizorTests: XCTestCase {
      }
 
     func testEvaluateComparison_ThrowsErrorIfCountGreaterThanThree() {
-       do {
-            _ = try sut.evaluate(comparison: [.operand(.variable("a")), .comparisonOperator(.equal), .operand(.number(3)), .bracket(.closing)])
-            XCTFail("Trying to evaluate a comparison which have more than three elements should throw an ExpressionError")
-       } catch {
-           guard error is ExpressionError else {
-               XCTFail("Error thrown isn't an ExpressionError")
-               return
-           }
-       }
+        let expression: Expression = [.operand(.variable("a")), .comparisonOperator(.equal), .operand(.number(3)), .bracket(.closing)]
+
+        XCTAssertThrowsError(try sut.evaluate(comparison: expression), "") { error in
+            guard error is ExpressionError else {
+                XCTFail("Error thrown isn't an ExpressionError")
+                return
+            }
+        }
     }
 
     func testEvaluateComparison_ThrowsErrorDoesntHaveComparisonOperator() {
-       do {
-            _ = try sut.evaluate(comparison: [.operand(.variable("a")), .logicOperator(.and), .operand(.number(3))])
-            XCTFail("Trying to evaluate a comparison which doesn't have a comparison  operator should throw an ExpressionError")
-       } catch {
-           guard error is ExpressionError else {
-               XCTFail("Error thrown isn't an ExpressionError")
-               return
-           }
-       }
+        let expression: Expression = [.operand(.variable("a")), .logicOperator(.and), .operand(.number(3))]
+
+        XCTAssertThrowsError(try sut.evaluate(comparison: expression), "") { error in
+            guard error is ExpressionError else {
+                XCTFail("Error thrown isn't an ExpressionError")
+                return
+            }
+        }
     }
 
     func testEvaluateComparison_ThrowsErrorUndefinedVariable() {
-       do {
-            _ = try sut.evaluate(comparison: [.operand(.variable("a")), .comparisonOperator(.equal), .operand(.number(3))])
-            XCTFail("Evaluate a comparison with an undefined variable should throw ExpressionError.undefinedVariable")
-       } catch {
+        let expression: Expression = [.operand(.variable("a")), .comparisonOperator(.equal), .operand(.number(3))]
+        XCTAssertThrowsError(try sut.evaluate(comparison: expression), "") { error in
             guard case ExpressionError.undefinedVariable(_) = error else {
                 XCTFail("Evaluate a comparison with an undefined variable should throw ExpressionError.undefinedVariable")
                 return
             }
-       }
+        }
     }
 
     func testEvaluateComparison_ThrowsErrorIFNoVariableFoundAsOperand() {
-       do {
-            _ = try sut.evaluate(comparison: [.operand(.number(1)), .comparisonOperator(.equal), .operand(.number(3))])
-            XCTFail("Trying to evaluate a comparison which doesn't have a variable as operand should throw an error")
-       } catch {
-           guard error is ExpressionError else {
-               XCTFail("Error thrown isn't an ExpressionError")
-               return
-           }
-       }
+        let expression: Expression = [.operand(.number(1)), .comparisonOperator(.equal), .operand(.number(3))]
+        XCTAssertThrowsError(try sut.evaluate(comparison: expression), "") { error in
+            guard error is ExpressionError else {
+                XCTFail("Error thrown isn't an ExpressionError")
+                return
+            }
+        }
     }
 
     // MARK: Clean comparison evaluation
+
+    func testThrowsErrorIfNoVariableAsOperand() {
+        XCTAssertThrowsError(try sut.evaluateCleanComparison(.number(2), .greaterThan, .number(3)), "") { error in
+            guard case ExpressionError.invalidExpression = error else {
+                XCTFail()
+                return
+            }
+        }
+    }
 
     func testEvaluateComparison_EqualString() {
         sut.variables["variable"] = "Hello"

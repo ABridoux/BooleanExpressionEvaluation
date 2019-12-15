@@ -127,7 +127,7 @@ class ExpressionEvaluatorTests: XCTestCase {
         }
     }
 
-    func testEvaluateExpression2_UnbalancedBracket() {
+    func testEvaluateExpression2_UnbalancedBracketThrowsError() {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
@@ -140,11 +140,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
-
-        do {
-            _ = try sut.evaluateExpression()
-             XCTFail("The function should have thrown an unbalanced bracket error")
-        } catch {
+        XCTAssertThrowsError(try sut.evaluateExpression(), "") { error in
             guard case ExpressionError.unbalancedBrackets = error else {
                 XCTFail("The function should have thrown an unbalanced bracket error")
                 return
