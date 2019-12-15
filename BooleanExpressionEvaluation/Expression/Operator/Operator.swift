@@ -23,7 +23,7 @@ public struct Operator: OperatorProtocol {
 
     // MARK: - Constants
 
-    typealias Evaluation = (Any, Any) -> Bool?
+    public typealias Evaluation = (Any, Any) -> Bool?
 
     // MARK: - Properties
 
@@ -36,7 +36,7 @@ public struct Operator: OperatorProtocol {
 
     // MARK: - Initialization
 
-    init(_ description: String, evaluation: @escaping Evaluation) {
+    public init(_ description: String, evaluation: @escaping Evaluation) {
         self.description = description
         self.evaluate = evaluation
     }
@@ -112,4 +112,34 @@ extension Operator {
         let splittedLhs = lhs.split(separator: ",").map { String($0.trimmingCharacters(in: .whitespaces)) }
         return splittedLhs.contains(rhs)
     }}
+}
+
+extension Operator {
+    /** Call this function if you want to prevent the default operator `==` to work.
+    If you need to override the behavior of `==`, simply insert a new operator with the same description*/
+    func removeDefaultEqual() { Self.models.remove(.equal) }
+
+    /** Call this function if you want to prevent the default operator `!=` to work.
+    If you need to override the behavior of `!=`, simply insert a new operator with the same description*/
+    func removeDefaultNonEqual() { Self.models.remove(.nonEqual) }
+
+    /** Call this function if you want to prevent the default operator `>` to work.
+    If you need to override the behavior of `>`, simply insert a new operator with the same description*/
+    func removeDefaultGreaterThan() { Self.models.remove(.greaterThan) }
+
+    /** Call this function if you want to prevent the default operator `>=` to work.
+    If you need to override the behavior of `>=`, simply insert a new operator with the same description*/
+    func removeDefaultGreaterThanOrEqual() { Self.models.remove(.greaterThanOrEqual) }
+
+    /** Call this function if you want to prevent the default operator `<` to work.
+    If you need to override the behavior of `<`, simply insert a new operator with the same description*/
+    func removeDefaultLesserThan() { Self.models.remove(.lesserThan) }
+
+    /** Call this function if you want to prevent the default operator `<=` to work.
+    If you need to override the behavior of `<=`, simply insert a new operator with the same description*/
+    func removeDefaultLesserThanOrEqual() { Self.models.remove(.lesserThanOrEqual) }
+
+    /** Call this function if you want to prevent the default operator `<:` to work.
+    If you need to override the behavior of `<:`, simply insert a new operator with the same description*/
+    func removeDefaultContains() { Self.models.remove(.contains) }
 }

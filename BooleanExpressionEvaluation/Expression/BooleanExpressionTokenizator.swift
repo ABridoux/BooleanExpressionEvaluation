@@ -173,16 +173,16 @@ struct BooleanExpressionTokenizator {
         // get the left or right variable value
         let variableName: String
         let isLeftOperandAVariable: Bool
-        var remainigOperand: ExpressionElement.Operand
+        var remainingOperand: ExpressionElement.Operand
 
         if case let ExpressionElement.Operand.variable(name) = leftOperand {
             variableName = name
             isLeftOperandAVariable = true
-            remainigOperand = rightOperand
+            remainingOperand = rightOperand
         } else if case let ExpressionElement.Operand.variable(name) = rightOperand {
             variableName = name
             isLeftOperandAVariable = false
-            remainigOperand = leftOperand
+            remainingOperand = leftOperand
         } else {
             let expressionDescription = "\(leftOperand.description) \(comparisonOperator.description), \(rightOperand.description)"
             throw ExpressionError.invalidExpression("Trying to evaluate a comparison which doesn't have at least one variable for operand: \(expressionDescription)")
@@ -194,7 +194,7 @@ struct BooleanExpressionTokenizator {
 
         var result: Bool?
 
-        switch remainigOperand {
+        switch remainingOperand {
 
         case .string(let string):
             result = isLeftOperandAVariable ? comparisonOperator.evaluate(variableValue, string) : comparisonOperator.evaluate(string, variableValue)
