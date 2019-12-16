@@ -44,7 +44,7 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
         case number(Double)
         case boolean(Bool)
 
-        init(_ element: String) throws {
+        init(_ element: String, variablesRegexPattern: String? = nil) throws {
             if element.first == "\"" && element.last == "\"" {
                 var string = element
                 string.removeFirst()
@@ -58,7 +58,8 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
             } else if let boolean = Bool(element) {
                 self = .boolean(boolean)
             } else {
-                guard let regex = try? NSRegularExpression(pattern: "[a-zA-Z]{1}[a-zA-Z0-9_-]*", options: []),
+                let pattern = variablesRegexPattern ?? Self.variableRegexPattern
+                guard let regex = try? NSRegularExpression(pattern: pattern, options: []),
                 regex.matchFoundIn(element) else {
                     throw ExpressionError.invalidVariableName(element)
                 }
@@ -73,6 +74,22 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
             case .number(let double): return double.description
             case .boolean(let boolean): return boolean.description
             }
+        }
+
+        static let booleanRegexPattern = "true|false"
+        static let numberRegexPattern = #"[0-9\.]+"#
+        static let stringRegexPattern =  #"".*""#
+        static let variableRegexPattern = "[a-zA-Z]{1}[a-zA-Z0-9_-]+"
+
+        static func getRegexPattern(variablesRegexPattern: String? = nil) -> String {
+            var pattern = #"\(*("#
+            pattern += #"(\#(booleanRegexPattern))|"#
+            pattern += #"(\#(numberRegexPattern))|"#
+            pattern += #"(\#(stringRegexPattern))|"#
+            pattern += #"(\#(variablesRegexPattern ?? variableRegexPattern))"#
+            pattern += #")\)*"#
+
+            return pattern
         }
     }
 
@@ -89,7 +106,7 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
 
     // MARK: - Initialization
 
-    init(element: String) throws {
+    init(element: String, variablesRegexPattern: String? = nil) throws {
         if let comparisonOperator = Operator.findModel(with: element) {
             self = .comparisonOperator(comparisonOperator)
         } else if let logicOperator = LogicOperator.findModel(with: element) {
@@ -97,7 +114,7 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
         } else if let bracket = Bracket(rawValue: element) {
             self = .bracket(bracket)
         } else {
-            self = .operand(try Operand(element))
+            self = .operand(try Operand(element, variablesRegexPattern: variablesRegexPattern))
         }
     }
 

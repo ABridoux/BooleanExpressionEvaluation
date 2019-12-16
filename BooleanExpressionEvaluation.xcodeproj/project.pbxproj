@@ -12,6 +12,7 @@
 		BD12A22423A66431003BC568 /* OperatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD12A22323A66431003BC568 /* OperatorProtocol.swift */; };
 		BD12A22623A66577003BC568 /* Operator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD12A22523A66577003BC568 /* Operator.swift */; };
 		BD12A22F23A6CC66003BC568 /* LogicOperator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD12A22E23A6CC66003BC568 /* LogicOperator.swift */; };
+		BD12A23123A6DA2D003BC568 /* VariablePatternTestsIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD12A23023A6DA2D003BC568 /* VariablePatternTestsIntegration.swift */; };
 		BDB6C4762392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6C4752392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift */; };
 		BDB6C4782392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6C4772392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift */; };
 		BDE6B086238E5FA90021D4AD /* BooleanExpressionEvaluation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDE6B07C238E5FA90021D4AD /* BooleanExpressionEvaluation.framework */; };
@@ -48,6 +49,7 @@
 		BD12A22323A66431003BC568 /* OperatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperatorProtocol.swift; sourceTree = "<group>"; };
 		BD12A22523A66577003BC568 /* Operator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operator.swift; sourceTree = "<group>"; };
 		BD12A22E23A6CC66003BC568 /* LogicOperator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogicOperator.swift; sourceTree = "<group>"; };
+		BD12A23023A6DA2D003BC568 /* VariablePatternTestsIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VariablePatternTestsIntegration.swift; path = Pods/VariablePatternTestsIntegration.swift; sourceTree = SOURCE_ROOT; };
 		BDB6C4752392D4E70027D01F /* BooleanExpressionTokenizorTestsIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooleanExpressionTokenizorTestsIntegration.swift; sourceTree = "<group>"; };
 		BDB6C4772392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionEvaluatorTestsIntegration.swift; sourceTree = "<group>"; };
 		BDE6B07C238E5FA90021D4AD /* BooleanExpressionEvaluation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BooleanExpressionEvaluation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -149,6 +151,7 @@
 		BDE6B089238E5FA90021D4AD /* BooleanExpressionEvaluationTests */ = {
 			isa = PBXGroup;
 			children = (
+				BD12A23023A6DA2D003BC568 /* VariablePatternTestsIntegration.swift */,
 				BDE6B0AD238E638D0021D4AD /* Expression */,
 				BDE6B08C238E5FA90021D4AD /* Info.plist */,
 			);
@@ -400,6 +403,7 @@
 			files = (
 				BDE6B0B7238E638D0021D4AD /* ExpressionTests.swift in Sources */,
 				BDE6B0B4238E638D0021D4AD /* BooleanExpressionTokenizorTests.swift in Sources */,
+				BD12A23123A6DA2D003BC568 /* VariablePatternTestsIntegration.swift in Sources */,
 				BDE6B0B5238E638D0021D4AD /* ExpressionElementTests.swift in Sources */,
 				BDB6C4782392D5C00027D01F /* ExpressionEvaluatorTestsIntegration.swift in Sources */,
 				BDE6B0B6238E638D0021D4AD /* ExpressionEvaluatorTests.swift in Sources */,
