@@ -1,4 +1,9 @@
-//
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>FILEHEADER</key>
+	<string>//
 //  GNU GPLv3
 //
 /*
@@ -15,16 +20,6 @@
     You should have received a copy of the GNU General Public License
     along with this program. If not, see https://www.gnu.org/licenses
     for more information.
-*/
-
-import Foundation
-
-extension Array {
-    mutating func popFirst() -> Self.Element? {
-        guard let first = self.first else {
-            return nil
-        }
-        removeFirst()
-        return first
-    }
-}
+*/</string>
+</dict>
+</plist>

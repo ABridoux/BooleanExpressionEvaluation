@@ -1,8 +1,7 @@
 //
 //  GNU GPLv3
 //
-/*  Copyright © 2019-present Alexis Bridoux.
-
+/*
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -23,66 +22,16 @@ import Foundation
 /// Represent an element in a boolean expression
 public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
 
-    case comparisonOperator(ComparisonOperator)
+    // MARK: - Properties
+
+    // MARK: Cases
+
+    case comparisonOperator(Operator)
     case logicOperator(LogicOperator)
     case bracket(Bracket)
     case operand(Operand)
 
     // MARK: - Associated enums
-
-    public enum ComparisonOperator: String {
-        case equal = "=="
-        case nonEqual = "!="
-        case greaterThan = ">"
-        case greaterThanOrEqual = ">="
-        case lesserThan = "<"
-        case lesserThanOrEqual = "<="
-        case contains = "::"
-
-        func evaluate<T: Equatable>(_ leftOperand: T, _ rightOperand: T) -> Bool? {
-            return leftOperand == rightOperand
-        }
-
-        func evaluate<T: Comparable>(_ leftOperand: T, _ rightOperand: T) -> Bool? {
-            switch self {
-            case .equal:
-                return leftOperand == rightOperand
-            case .nonEqual:
-                return leftOperand != rightOperand
-            case .greaterThan:
-                return leftOperand > rightOperand
-            case .greaterThanOrEqual:
-                return leftOperand >= rightOperand
-            case .lesserThan:
-                return leftOperand < rightOperand
-            case .lesserThanOrEqual:
-                return leftOperand <= rightOperand
-            case .contains:
-                guard let leftString = leftOperand as? String,
-                    let rightString = rightOperand as? String else { return false }
-                let elements = leftString.split(separator: ",").map { String($0.trimmingCharacters(in: .whitespaces)) }
-                return elements.contains(rightString)
-            }
-        }
-    }
-
-    public enum LogicOperator: String {
-        case or = "||"
-        case and = "&&"
-
-        func evaluate(_ leftBooleanElement: ExpressionElement.Operand, _ rightBooleanElement: ExpressionElement.Operand) -> ExpressionElement.Operand? {
-            guard case let .boolean(leftBoolean) = leftBooleanElement,
-            case let .boolean(rightBoolean) = rightBooleanElement else {
-                return nil
-            }
-            switch self {
-            case .and:
-                return .boolean(leftBoolean && rightBoolean)
-            case .or:
-                return .boolean(leftBoolean || rightBoolean)
-            }
-        }
-    }
 
     public enum Bracket: String {
         case opening = "("
@@ -95,7 +44,7 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
         case number(Double)
         case boolean(Bool)
 
-        init(_ element: String) throws {
+        init(_ element: String, variablesRegexPattern: String? = nil) throws {
             if element.first == "\"" && element.last == "\"" {
                 var string = element
                 string.removeFirst()
@@ -109,7 +58,8 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
             } else if let boolean = Bool(element) {
                 self = .boolean(boolean)
             } else {
-                guard let regex = try? NSRegularExpression(pattern: "[a-zA-Z]{1}[a-zA-Z0-9_-]*", options: []),
+                let pattern = variablesRegexPattern ?? Self.variableRegexPattern
+                guard let regex = try? NSRegularExpression(pattern: pattern, options: []),
                 regex.matchFoundIn(element) else {
                     throw ExpressionError.invalidVariableName(element)
                 }
@@ -125,14 +75,30 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
             case .boolean(let boolean): return boolean.description
             }
         }
+
+        static let booleanRegexPattern = "true|false"
+        static let numberRegexPattern = #"[0-9\.]+"#
+        static let stringRegexPattern =  #"".*""#
+        static let variableRegexPattern = "[a-zA-Z]{1}[a-zA-Z0-9_-]+"
+
+        static func getRegexPattern(variablesRegexPattern: String? = nil) -> String {
+            var pattern = #"\(*("#
+            pattern += #"(\#(booleanRegexPattern))|"#
+            pattern += #"(\#(numberRegexPattern))|"#
+            pattern += #"(\#(stringRegexPattern))|"#
+            pattern += #"(\#(variablesRegexPattern ?? variableRegexPattern))"#
+            pattern += #")\)*"#
+
+            return pattern
+        }
     }
 
     // MARK: - Properties
 
     public var description: String {
         switch self {
-        case .comparisonOperator(let comparisonOperator): return comparisonOperator.rawValue
-        case .logicOperator(let logicOperator): return logicOperator.rawValue
+        case .comparisonOperator(let comparisonOperator): return comparisonOperator.description
+        case .logicOperator(let logicOperator): return logicOperator.description
         case .bracket(let bracket): return bracket.rawValue
         case .operand(let operand): return operand.description
         }
@@ -140,15 +106,15 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
 
     // MARK: - Initialization
 
-    init(element: String) throws {
-        if let comparisonOperator = ComparisonOperator(rawValue: element) {
+    init(element: String, variablesRegexPattern: String? = nil) throws {
+        if let comparisonOperator = Operator.findModel(with: element) {
             self = .comparisonOperator(comparisonOperator)
-        } else if let logicOperator = LogicOperator(rawValue: element) {
+        } else if let logicOperator = LogicOperator.findModel(with: element) {
             self = .logicOperator(logicOperator)
         } else if let bracket = Bracket(rawValue: element) {
             self = .bracket(bracket)
         } else {
-            self = .operand(try Operand(element))
+            self = .operand(try Operand(element, variablesRegexPattern: variablesRegexPattern))
         }
     }
 

@@ -1,8 +1,7 @@
 //
 //  GNU GPLv3
 //
-/*  Copyright © 2019-present Alexis Bridoux.
-
+/*
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
@@ -17,6 +16,7 @@
     along with this program. If not, see https://www.gnu.org/licenses
     for more information.
 */
+
 import Foundation
 
 /**
@@ -29,10 +29,10 @@ import Foundation
 struct HalfBooleanExpression {
 
     /// Left boolean operand
-    let boolean: ExpressionElement.Operand
+    let boolean: Bool
 
     /// Logic operator. Can be nil if the `HalfBooleanExpression` is at the end of the expression as the last operand.
-    let logicOperator: ExpressionElement.LogicOperator?
+    let logicOperator: LogicOperator?
 
     /**
      Evaluate a `HalfBooleanExpression` with another one as the right operand.
@@ -51,13 +51,13 @@ struct HalfBooleanExpression {
                  `boolean && boolean || ...boolean` → `boolean || ...boolean`
                  `boolean || boolean || ...boolean` → `boolean || ...boolean`
                  */
-                guard let result = logicOperator.evaluate(boolean, otherExpression.boolean) else { return nil}
+                let result = logicOperator.evaluate(boolean, otherExpression.boolean)
                 return HalfBooleanExpression(boolean: result, logicOperator: .or)
             case .and:
                 switch logicOperator {
                 case .and:
                     /** `boolean && boolean && ...boolean` → `boolean && ...boolean` */
-                    guard let result = logicOperator.evaluate(boolean, otherExpression.boolean) else { return nil}
+                    let result = logicOperator.evaluate(boolean, otherExpression.boolean)
                     return HalfBooleanExpression(boolean: result, logicOperator: .and)
                 case .or:
                     /**
@@ -65,11 +65,15 @@ struct HalfBooleanExpression {
                      we are not able to evaluate the expression as the right operand of the `&&` is unknown. Return nil
                      */
                     return nil
+
+                default: return nil // other logic operators not allowed
                 }
+
+            default: return nil // other logic operators not allowed
             }
         } else {
             // the other expression doesn't have a logic operator, so we can simply return a boolean
-            guard let result = logicOperator.evaluate(boolean, otherExpression.boolean) else { return nil }
+            let result = logicOperator.evaluate(boolean, otherExpression.boolean)
             return HalfBooleanExpression(boolean: result , logicOperator: nil)
         }
     }

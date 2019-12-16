@@ -27,7 +27,7 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
-        let expressionString = #"(variable == 1 && isCheck == false) || Ducks :: "Fifi""#
+        let expressionString = #"(variable == 1 && isCheck == false) || Ducks <: "Fifi""#
 
         guard var sut = try? ExpressionEvaluator(string: expressionString, variables: variables) else {
             XCTFail("Unable to init an ExpressionEvaluator from this expression: \(expressionString)")
@@ -47,7 +47,7 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi,  Loulou"
         variables["duck"] = "Riri"
-        let expressionString = #"variable == 1 || isCheck == true && Ducks :: duck"#
+        let expressionString = #"variable == 1 || isCheck == true && Ducks <: duck"#
 
         guard var sut = try? ExpressionEvaluator(string: expressionString, variables: variables) else {
             XCTFail("Unable to init an ExpressionEvaluator from this expression: \(expressionString)")
@@ -85,7 +85,7 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi,  Loulou"
         variables["duck"] = "Riri"
-        let expressionString = #"variable != 1 || isCheck != true && Ducks :: duck"#
+        let expressionString = #"variable != 1 || isCheck != true && Ducks <: duck"#
 
         guard var sut = try? ExpressionEvaluator(string: expressionString, variables: variables) else {
             XCTFail("Unable to init an ExpressionEvaluator from this expression: \(expressionString)")
@@ -94,7 +94,7 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
 
         do {
             let result = try sut.evaluateExpression()
-            XCTAssertFalse(result)
+            XCTAssertTrue(result)
         } catch {
             XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
         }
