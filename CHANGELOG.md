@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file. `BooleanExp
 
 ---
 
+## [1.2.0](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.2.0) (16/12/2019)
+
+### Added
+
+- Possibilty to define new operators, or to override the existing ones, via extensions
+- Possibility to define another regular expression string pattern to parse variables when initializing an expression
+
+### Fixed
+- Evaluatation of two operands in the wrong order for comparison operator in `BooleanExpressionTokenizator`
+
+### Changed
+- Default `contains` operator from `::` to `<:`
+
 ## [1.1.3](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.1.3) (30/11/2019)
 
 ### Hotfix
