@@ -21,7 +21,6 @@ import Foundation
 
 public struct LogicOperator: OperatorProtocol {
 
-
     // MARK: - Constants
 
     typealias Evaluation = (Bool, Bool) -> Bool

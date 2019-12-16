@@ -21,7 +21,7 @@
 import Foundation
 
 /// Represents a boolean expression as an array of `ExpressionElements`
-public struct Expression: Collection, Equatable {
+public struct Expression: Collection, CustomStringConvertible {
 
     public typealias Element = ExpressionElement
     public typealias ArrayType = [ExpressionElement]
@@ -29,23 +29,18 @@ public struct Expression: Collection, Equatable {
     // MARK: - Constants
 
     static let operatorsPattern = "[\(Operator.regexPattern)\(LogicOperator.regexPattern)]+"
-    static let operandsGeneralPattern = #"[a-zA-Z0-9()\._-]+"#
-    static let stringRegexPattern = #"".*""#
-    static let regexPattern: String = {
-        var regexPattern = #"(?<=\s|^)"#
-        regexPattern.append("(\(Self.operatorsPattern))")
-        regexPattern.append(#"|(\#(Self.operandsGeneralPattern))"#)
-        regexPattern.append(#"|(\#(Self.stringRegexPattern))"#)
-        regexPattern.append(#"(?=\s|$)"#)
-        return regexPattern
-    }()
+    static let bracketsPattern = #"[\(\)]+"#
 
     // MARK: - Properties
+
+    // MARK: Collection
 
     private var elements = ArrayType()
 
     public var startIndex: Int { elements.startIndex }
     public var endIndex: Int { elements.endIndex }
+
+    // MARK: CustomStringConvertible
 
     public var description: String {
         var description = ""
@@ -67,6 +62,11 @@ public struct Expression: Collection, Equatable {
         return description
     }
 
+    // MARK: Expression
+
+    /// The pattern used for the regular expression to split the string expression
+    let regexPattern: String
+
     /// The variables involved the the expression
     public var variables: Set<String> {
         var variableNames = Set<String>()
@@ -80,10 +80,11 @@ public struct Expression: Collection, Equatable {
 
     // MARK: - Initialiation
 
-    public init(_ stringExpression: String) throws {
+    public init(_ stringExpression: String, variablesRegexPattern: String? = nil) throws {
         // split the string expression
-        let regex = try NSRegularExpression(pattern: Self.regexPattern, options: [])
-        let stringElements = regex.matches(in: stringExpression)
+        regexPattern = Self.computeRegexPattern(variablesRegexPattern: variablesRegexPattern)
+        let regex = try NSRegularExpression(pattern: regexPattern, options: [])
+        let stringElements = try regex.matches(in: stringExpression)
 
         var evaluatedExpression = [ExpressionElement]()
 
@@ -102,7 +103,7 @@ public struct Expression: Collection, Equatable {
                 elementWithoutBrackets.removeLast()
             }
 
-            let element = try ExpressionElement(element: elementWithoutBrackets)
+            let element = try ExpressionElement(element: elementWithoutBrackets, variablesRegexPattern: variablesRegexPattern)
             evaluatedExpression.append(element)
 
             if addClosingBracket {
@@ -117,6 +118,7 @@ public struct Expression: Collection, Equatable {
     }
 
     public init(_ elements: ArrayType) {
+        regexPattern = Self.computeRegexPattern()
         self.elements = elements
     }
 
@@ -151,6 +153,17 @@ public struct Expression: Collection, Equatable {
         var evaluator = ExpressionEvaluator(expression: self, variables: variables)
         return try evaluator.evaluateExpression()
     }
+
+    private static func computeRegexPattern(variablesRegexPattern: String? = nil) -> String {
+        let operandsRegexPattern = ExpressionElement.Operand.getRegexPattern(variablesRegexPattern: variablesRegexPattern)
+
+        var regexPattern = #"(?<=\s|^)"#
+        regexPattern.append("(\(Self.operatorsPattern))")
+        regexPattern.append("|(\(Self.bracketsPattern))")
+        regexPattern.append("|(\(operandsRegexPattern))")
+        regexPattern.append(#"(?=\s|$)"#)
+        return regexPattern
+    }
 }
 
 extension Expression: ExpressibleByArrayLiteral {
@@ -158,6 +171,13 @@ extension Expression: ExpressibleByArrayLiteral {
 
     public init(arrayLiteral elements: ExpressionElement...) {
         self.elements = elements
+        regexPattern = Self.computeRegexPattern()
+    }
+}
+
+extension Expression: Equatable {
+    public static func == (lhs: Expression, rhs: Expression) -> Bool {
+        return lhs.elements == rhs.elements
     }
 }
 
