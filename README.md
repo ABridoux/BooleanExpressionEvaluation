@@ -6,7 +6,7 @@
 
 #  About boolean expressions
 
-This library is useful to evaluate a string expression like `variable1 >= 2 && variable2 = "Value"`. The variables are provided by a dictionary `[String : String]` representing the variables and their values. The complexity to evaluate a string expression is O(n)
+This library is useful to evaluate a string expression like `variable1 >= 2 && variable2 == "Value"`. The variables are provided by a dictionary `[String : String]` representing the variables and their values. The complexity to evaluate a string expression is O(n)
 
 ## Usage
 

@@ -30,7 +30,7 @@ struct BooleanExpressionTokenizator {
     var expression: Expression
     var currentToken = ExpressionElement.logicOperator(.or)
 
-    /// Stores the variables which are present present in the expression
+    /// Stores the variables which are present in the expression
     var variables: [String: String]
 
     // MARK: - Init
@@ -38,7 +38,7 @@ struct BooleanExpressionTokenizator {
     /**
      - Parameters:
         - expression: The expression to tokenize
-        - variables: Variables which arepresent in the expression
+        - variables: Variables which are present in the expression
      */
     init(expression: Expression, variables: [String: String]) {
         self.expression = expression
@@ -52,7 +52,7 @@ struct BooleanExpressionTokenizator {
     /**
     Consume the next token in the expression
      - returns: A token if one was found, or `nil` if the end of the expression is reached.
-     - note: Throws an error if a token chaining doesn't respect the grammar rule. The possible returned token are the following:
+     - note: Throws an error if a token chaining doesn't respect the grammar rules. The possible returned token are the following:
         - LogicOperator
         - Bracket
         - Operand.Boolean
@@ -96,13 +96,21 @@ struct BooleanExpressionTokenizator {
         if case let ExpressionElement.bracket(bracket) = nextElement, bracket == .opening {
             return nextElement
         }
-        // try to get an expression from the next three elements (only a comparison expression can follow an operator or an opening bracket)
-        let comparisonExpression = [nextElement, expression.popFirst(), expression.popFirst()].compactMap { $0 }
-        guard !comparisonExpression.isEmpty else {
-            throw ExpressionError.invalidGrammar("Only a comparison expression can follow a \(currentToken.description)")
+
+        if case ExpressionElement.comparisonOperator? = expression.first {
+            /** we have a comparison operator as the next element so
+            try to get an expression from the next two elements with the current one*/
+            let comparisonExpression = [nextElement, expression.popFirst(), expression.popFirst()].compactMap { $0 }
+            guard !comparisonExpression.isEmpty else {
+                throw ExpressionError.invalidGrammar("Only a comparison expression can follow a \(currentToken.description)")
+            }
+            let result = try evaluate(comparison: Expression(comparisonExpression)) // using .map seems to prevent to initialize the Expression as an array literal
+            return .operand(.boolean(result))
+        } else {
+            // try to get a single element expression from the next element
+            let singleExpressionResult = try evaluate(singleBooleanExpression: Expression([nextElement]))
+            return .operand(.boolean(singleExpressionResult))
         }
-        let result = try evaluate(comparison: Expression(comparisonExpression)) // using .map seems to prevent to initialize the Expression as an array literal
-        return .operand(.boolean(result))
     }
 
     /// Validate a next token when the current one is a closing bracket and returns it
@@ -127,10 +135,6 @@ struct BooleanExpressionTokenizator {
      the need of a computer, since with only take care of boolean expressions
      */
     func evaluate(comparison expression: Expression) throws -> Bool {
-        if expression.count != 3 {
-            // try to evaluate a single boolean variable like isUserLoggedIn
-            return try evaluate(singleBooleanExpression: expression)
-        }
 
         guard expression.count == 3 else {
             throw ExpressionError.invalidExpression("Trying to evaluate a comparison which has not exactly three elements")
