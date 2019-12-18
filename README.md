@@ -8,6 +8,10 @@
 
 This library is useful to evaluate a string expression like `variable1 >= 2 && variable2 == "Value"`. The variables are provided by a dictionary `[String : String]` representing the variables and their values. The complexity to evaluate a string expression is O(n)
 
+## Alternatives
+
+Both [Expression](https://github.com/nicklockwood/Expression) from Nick Lockwood and [Eval](https://github.com/tevelee/Eval) from Lázló Teveli are interesintg alternatives. Exression is a ready to use framework and Lázló Teveli has produced a great work to deeply customize the usage of his framework. The goal of BooleanExpressionEvaluation is to focus on boolean expressions, when other expressions evaluation is not needed. Thus, the framework bears a little less complexity in its usage and customization.
+
 ## Usage
 
 To add the library to your projet, add the pod in your podfile:
@@ -183,6 +187,5 @@ Converts an expression which contains comparison expressions to a boolean expres
 ### `ExpressionEvaluator`
 
 Uses the `BooleanExpressionTokenizator`  to get the different elements of the boolean expression and evaluate it. A new array is added into the `expressionResults` array of arrays each time an opening bracket is met. When a closing bracket is met, the last created array is reduced to a boolean which is then injected into the previous array.  The last created array is then deleted.
-
 
 
