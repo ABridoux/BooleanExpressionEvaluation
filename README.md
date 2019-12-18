@@ -70,7 +70,7 @@ extension Expression {
 ## Operators
 There are two types of operators available in an expression: comparison operators, to compare a variable and an other operand, and logic operators, to compare to boolean operands.
 
-### Comparison operators:
+### Default comparison operators
 - `==` for *equal*
 - `!=` for different
 - `>` for *greater than*
@@ -79,13 +79,40 @@ There are two types of operators available in an expression: comparison operator
 - `<=` for *lesser than or equal*
 - `<:` for contains. The result is true is the left operand contains the right one. The left operand has to be filled with values separated by commas. For example: if the variable `Ducks` has "Riri, Fifi, Loulou" for value, the comparison `Ducks <: "Riri"` is evaluated as true.
 
-### Logic operator
+### Default logic operators
 - `&&` for *and*
 - `||` for *or*
 
 ### Custom operators
 
-You can define cutom operators
+You can define cutom operators in an extension of the `Operator` struct. Then add this operator to the `Operator.models` set. The same applies for the `LogicOperator` struct.
+
+For example, you can define the `hasPrefix` and `hasSuffix` operators  (note that the operators symbols are chosen arbitrarily):
+
+```swift
+extension Operator {
+    static var hasPrefix: Operator { Operator("~.") { (lhs, rhs) -> Bool? in
+        guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
+        return lhs.hasPrefix(rhs)
+    }}
+
+    static var hasSuffix: Operator { Operator(".~") { (lhs, rhs) -> Bool? in
+        guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
+        return lhs.hasSuffix(rhs)
+    }}
+}
+```
+Then, in the setup of your app:
+
+```swift
+Operator.models.insert(.hasPrefix)
+Operator.models.insert(.hasSuffix)
+```
+
+You can remove if you want the default operators, by calling the proper `Operator.removeDefault[Operator_Name]()` method. You can also directly override the behavior of a default operator, by updating the `Operator.models`  set with an operator which has the same description.
+
+<u>Note</u><br>
+As it is not possible for now to restrict a closure signature to a protocol without specifying the type as generic in the structure, we cannot allow only `Comparable` operands in an operator `evaluate` closure. Nonetheless, only strings, boolean and double are allowed as operands in this framework now. Moreover, you might want to compare a double and a string, with an opeator like `count` for example. This would no be possible if the two operands were comparable with the same type.
 
 ## Operands
 
@@ -93,9 +120,10 @@ You can compare a variable and an operand with a comparison operator. There are 
 - `String` which are quoted with double quotes only
 - `Number` which group all numeric values, including floating ones
 - `Boolean` which are written as *true* or *false*
-- `Variables` which have to begin by a letter (lower or upper case) and can contain hyphens `-` and underscores `_`. You can compare two variables. Note that the boolean variables can be written without the `==` to compare them to a boolean.
+- `Variables` which have to begin by a letter (lower or upper case) and can contain hyphens `-` and underscores `_`. You can compare two variables. Note that the boolean variables can be written without the `==` to evaluate if their state is `true`.
 
-Given the following variables, here are examples for each operator.
+Given the following variables, here are some examples:
+
 #### Variables: 
 - "isUserAWizard": "true"
 - "userName": "Gandalf"
@@ -115,7 +143,22 @@ Given the following variables, here are examples for each operator.
 ### Variables
 Variables are provided to the `Expression` with a `[String: String]` dictionary. When comparing two operands with a comparison operator, one of the operands at least has to be a variable. Otherwise, the comparison expression result is already known and the expression do not need to be evaluated.
 
-A useful property of an `Expression` is `variables`, which is an array of the names of all the variables involved in the expression. 
+A useful property of an `Expression` is `variables`, which is an array of the names of all the variables involved in the expression.
+
+The default regular expression to match a variable is `[a-zA-Z]{1}[a-zA-Z0-9_-]+`. You can choose to use an other regular expression by providing it when initializing an expression:
+
+```swift
+let expression = try? Expression("#variable >= 2", variablesRegexPattern: "[a-zA-Z#]{1}[a-zA-Z0-9#]+")
+```
+If you always use the same regular expresion, you should consider to write an extension of `Expression` to add the initializer with this default expression. So with our last example:
+
+```swift
+extension Expression {
+    init(stringExpression: String) throws {
+        try self.init(stringExpression, variablesRegexPattern: "[a-zA-Z#]{1}[a-zA-Z0-9#]+")
+    }
+}
+```
 
 ## Codable
 `Expression` implements the `Codable` protocol, and it is encoded/decoded as a `String`. Thus, you can try to decode a `String` value as an expression. And encoding it will render a `String`, describing it as a literal boolean expression. 
