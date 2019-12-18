@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. `BooleanExp
 
 ---
 
+## [1.2.1](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.2.1) (18/12/2019)
+
+### Fixed
+- Bug when evaluating single boolean variable followed by other elements
+
 ## [1.2.0](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.2.0) (16/12/2019)
 
 ### Added
