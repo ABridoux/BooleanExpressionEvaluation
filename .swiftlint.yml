@@ -1,6 +1,6 @@
 included:
- - BooleanExpressionEvaluation
- - BooleanExpressionEvaluationTests
+ - Sources
+ - Tests
 
 disabled_rules:
  - comma
