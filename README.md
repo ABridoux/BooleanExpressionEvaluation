@@ -27,9 +27,25 @@ To add the library to your projet, add the pod in your podfile:
 
 ### Swift Package Manager
 
-Add the package to your dependencies:
+Add the package to your dependencies in your *Package.swift* file
 
+```swift
+let package = Package (
+    ...
+    dependencies: [
+        .package(url: "https://github.com/ABridoux/BooleanExpressionEvaluation.git", from: "1.0.0")
+    ],
+    ...
+)
+```
 
+Or simply use Xcode menu *File* > *Swift Packages* > *Add Package Dependency*  and copy/paste the git URL: https://github.com/ABridoux/BooleanExpressionEvaluation.git
+
+Then import BolleanExpressionEvaluation in your file:
+
+```swift
+import BooleanExpressionEvaluation
+```
 
 ## Evaluate a String
 

@@ -6,7 +6,7 @@ s.name = "BooleanExpressionEvaluation"
 s.summary = "Evaluate string boolean expression with variables"
 s.requires_arc = true
 
-s.version = "1.2.1"
+s.version = "1.2.2"
 
 s.license = { :type => "GNU", :file => "LICENSE" }
 
