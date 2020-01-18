@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file. `BooleanExp
 
 ---
 
+## [1.2.2](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.2.2) (18/01/2019)
+
+### Added
+- Swift Package Manager compliance
+- *hasPrefix* and *hasSuffix* operators
+
+###  Removed
+- Cocoa Pods dependencies
+
+### Changed
+- `String`  extension function `sliced` for a `subscript`
+
 ## [1.2.1](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.2.1) (18/12/2019)
 
 ### Fixed
