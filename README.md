@@ -1,8 +1,14 @@
-![Swift](https://img.shields.io/badge/Swift-5.0+-f05138.svg?style=flat-square)
-![iOS](https://img.shields.io/badge/iOS-12+-lightgrey.svg?style=flat-square)
-![macOS](https://img.shields.io/badge/macOS-10.13+-lightgrey.svg?style=flat-square)
-
-[![CocoaPods](https://img.shields.io/cocoapods/v/BooleanExpressionEvaluation.svg?style=flat-square)](https://cocoapods.org/pods/BooleanExpressionEvaluation)
+<p align="center">
+    <img src="https://img.shields.io/badge/Swift-5.0+-f05138.svg?style=flat-square" />
+    <img src="https://img.shields.io/badge/iOS-12+-lightgrey.svg?style=flat-square" />
+    <img src="https://img.shields.io/badge/macOS-10.13+-lightgrey.svg?style=flat-square" />
+    <a href="https://swift.org/package-manager">
+        <img src="https://img.shields.io/badge/swiftpm-compatible-brightgreen.svg?style=flat" alt="Swift Package Manager" />
+    </a>
+    <a href="https://cocoapods.org/pods/BooleanExpressionEvaluation">
+        <img src="https://img.shields.io/cocoapods/v/BooleanExpressionEvaluation.svg?style=flat-square" alt="Cocoa Pods" />
+    </a>
+</p>
 
 #  About boolean expressions
 
@@ -14,8 +20,16 @@ Both [Expression](https://github.com/nicklockwood/Expression) from Nick Lockwood
 
 ## Usage
 
+### Cocoa Pods
+
 To add the library to your projet, add the pod in your podfile:
 `pod 'BooleanExpressionEvaluation'`
+
+### Swift Package Manager
+
+Add the package to your dependencies:
+
+
 
 ## Evaluate a String
 
@@ -23,7 +37,7 @@ To evaluate a String, create an `Expression`, passing the string as the paramete
 
 For example:
 
-(Note that the syntaxt `#""#` is used to allow the use of double quotes without quoting them with `\`)
+(Note that the use of the raw string syntaxt `#""#`  from Swift 5.0 is used to allow the use of double quotes without quoting them with `\`)
 
 ```swift
 let variables = ["userAge": "15", "userName": "Morty"]
@@ -82,6 +96,8 @@ There are two types of operators available in an expression: comparison operator
 - `<` for *lesser than*
 - `<=` for *lesser than or equal*
 - `<:` for contains. The result is true is the left operand contains the right one. The left operand has to be filled with values separated by commas. For example: if the variable `Ducks` has "Riri, Fifi, Loulou" for value, the comparison `Ducks <: "Riri"` is evaluated as true.
+- `~=` for *hasPrefix*
+- `=~` for *hasSuffix*
 
 ### Default logic operators
 - `&&` for *and*
@@ -91,16 +107,16 @@ There are two types of operators available in an expression: comparison operator
 
 You can define cutom operators in an extension of the `Operator` struct. Then add this operator to the `Operator.models` set. The same applies for the `LogicOperator` struct.
 
-For example, you can define the `hasPrefix` and `hasSuffix` operators  (note that the operators symbols are chosen arbitrarily):
+For example, you can define the `hasPrefix` and `hasSuffix` operators  (note that those operators already exist and that their symbols are chosen arbitrarily):
 
 ```swift
 extension Operator {
-    static var hasPrefix: Operator { Operator("~.") { (lhs, rhs) -> Bool? in
+    static var hasPrefix: Operator { Operator("~=") { (lhs, rhs) -> Bool? in
         guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
         return lhs.hasPrefix(rhs)
     }}
 
-    static var hasSuffix: Operator { Operator(".~") { (lhs, rhs) -> Bool? in
+    static var hasSuffix: Operator { Operator("=~") { (lhs, rhs) -> Bool? in
         guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
         return lhs.hasSuffix(rhs)
     }}
@@ -111,6 +127,16 @@ Then, in the setup of your app:
 ```swift
 Operator.models.insert(.hasPrefix)
 Operator.models.insert(.hasSuffix)
+```
+
+Finally, you can simply add an operator directly:
+
+```swift
+Operator.models.insert(Operator("~=") { (lhs, rhs) in
+    guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
+    return lhs.hasSuffix(rhs)
+})
+
 ```
 
 You can remove if you want the default operators, by calling the proper `Operator.removeDefault[Operator_Name]()` method. You can also directly override the behavior of a default operator, by updating the `Operator.models`  set with an operator which has the same description.
