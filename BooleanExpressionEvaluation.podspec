@@ -17,7 +17,7 @@ s.homepage = "https://github.com/ABridoux/BooleanExpressionEvaluation"
 s.source = { :git => "https://github.com/ABridoux/BooleanExpressionEvaluation.git",
              :tag => "#{s.version}" }
 
-s.source_files = "BooleanExpressionEvaluation/**/*.{swift}"
+s.source_files = "Sources/BooleanExpressionEvaluation/**/*.{swift}"
 
 s.swift_version = "5"
 
