@@ -78,7 +78,7 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
 
         static let booleanRegexPattern = "true|false"
         static let numberRegexPattern = #"[0-9\.]+"#
-        static let stringRegexPattern =  #"".*""#
+        static let stringRegexPattern =  #""[^"]*""#
         static let variableRegexPattern = "[a-zA-Z]{1}[a-zA-Z0-9_-]+"
 
         static func getRegexPattern(variablesRegexPattern: String? = nil) -> String {

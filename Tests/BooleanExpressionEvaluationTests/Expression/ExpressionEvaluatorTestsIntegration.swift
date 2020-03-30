@@ -81,7 +81,7 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         }
     }
 
-    func testEvaluateString_WtihDebt() {
+    func testEvaluateString_WithDebt() {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi,  Loulou"
@@ -96,6 +96,21 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         do {
             let result = try sut.evaluateExpression()
             XCTAssertTrue(result)
+        } catch {
+            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
+        }
+    }
+
+    func testDoubleString() {
+        variables["variable"] = "Installed"
+        variables["var2"] = "Installed"
+
+        let expressionString = #"variable != "Installed" && var2 == "Installed""#
+
+        do {
+            var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+            let result = try sut!.evaluateExpression()
+            XCTAssertFalse(result)
         } catch {
             XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
         }

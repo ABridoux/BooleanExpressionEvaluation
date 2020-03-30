@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file. `BooleanExpressionEvaluation` adheres to [Semantic Versioning](http://semver.org).
 
 ---
+## [1.2.3](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.2.3) (30/03/2020)
+
+### Fixed
+- The string regex pattern allowed to take anything between double quotes, even a double quote.
 
 ## [1.2.2](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.2.2) (18/01/2019)
 
