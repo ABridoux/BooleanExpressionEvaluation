@@ -1,10 +1,7 @@
 //
-//  ExpressionEvaluatorTestsIntegration.swift
-//  BooleanExpressionEvaluationTests
-//
-//  Created by Alexis Bridoux on 30/11/2019.
-//  Copyright © 2019 Alexis Bridoux. All rights reserved.
-//
+// Scout
+// Copyright (c) Alexis Bridoux 2020
+// MIT license, see LICENSE file for details
 
 import XCTest
 @testable import BooleanExpressionEvaluation
