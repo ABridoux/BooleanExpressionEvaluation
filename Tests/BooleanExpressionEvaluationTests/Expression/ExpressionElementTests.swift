@@ -8,9 +8,18 @@ import XCTest
 
 class ExpressionElementTests: XCTestCase {
 
-    func testInitOperand_String() {
+    func testInitOperand_StringDoubleQuotes() {
         do {
             let element = try ExpressionElement.Operand(#""StringValue""#)
+            XCTAssertEqual(element, ExpressionElement.Operand.string("StringValue"))
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testInitOperand_StringSingleQuotes() {
+        do {
+            let element = try ExpressionElement.Operand("'StringValue'")
             XCTAssertEqual(element, ExpressionElement.Operand.string("StringValue"))
         } catch {
             XCTFail(error.localizedDescription)

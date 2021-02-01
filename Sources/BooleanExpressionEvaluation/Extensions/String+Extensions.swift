@@ -23,4 +23,8 @@ extension String {
         }
         return quotedString
     }
+
+    func isEnclosed(by string: String) -> Bool {
+        hasPrefix(string) && hasSuffix(string)
+    }
 }

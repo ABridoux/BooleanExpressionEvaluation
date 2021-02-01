@@ -78,6 +78,25 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         }
     }
 
+    func testEvaluateString3SingleQuotes() {
+        variables["name"] = "Benjamin Daniel or Benzaïe"
+        variables["isCheck"] = "true"
+        variables["isUserAWizard"] = "true"
+        let expressionString = #"name == 'Benjamin Daniel or Benzaïe' && isCheck && isUserAWizard"#
+
+        guard var sut = try? ExpressionEvaluator(string: expressionString, variables: variables) else {
+            XCTFail("Unable to init an ExpressionEvaluator from this expression: \(expressionString)")
+            return
+        }
+
+        do {
+            let result = try sut.evaluateExpression()
+            XCTAssertTrue(result)
+        } catch {
+            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
+        }
+    }
+
     func testEvaluateString_WithDebt() {
         variables["variable"] = "1"
         variables["isCheck"] = "false"

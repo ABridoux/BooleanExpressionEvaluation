@@ -79,11 +79,11 @@ public struct Expression: Collection, CustomStringConvertible {
             var elementWithoutBrackets = String(element)
 
             // > 1 otherwise it is a sole bracket
-            if elementWithoutBrackets.hasPrefix("("), element.count > 1 {
+            if elementWithoutBrackets.hasPrefix(ExpressionElement.Bracket.opening.rawValue), element.count > 1 {
                 evaluatedExpression.append(.bracket(.opening))
                 elementWithoutBrackets.removeFirst()
             }
-            if elementWithoutBrackets.hasSuffix(")"), element.count > 1 {
+            if elementWithoutBrackets.hasSuffix(ExpressionElement.Bracket.closing.rawValue), element.count > 1 {
                 addClosingBracket = true
                 elementWithoutBrackets.removeLast()
             }
@@ -95,6 +95,7 @@ public struct Expression: Collection, CustomStringConvertible {
                 evaluatedExpression.append(.bracket(.closing))
             }
         }
+
         guard !evaluatedExpression.isEmpty else {
             throw ExpressionError.emptyExpression
         }
