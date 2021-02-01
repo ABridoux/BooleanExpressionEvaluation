@@ -18,10 +18,8 @@ extension NSRegularExpression {
     /// Characters that has to be quoted to be used in a regular expression
     static var charactersToQuote: [String] { ["*", "?", "+", "[", "(", ")", "{", "}", "^", "$", "|", "\\", ".", "/", "="] }
 
-    /**
-     - Parameter string: The string in which to look for a match
-     - Returns: The first string match found, if any
-     */
+    /// - Parameter string: The string in which to look for a match
+    /// - Returns: The first string match found, if any
     func firstMatchString(in string: String) -> String? {
         guard let range = firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.count))?.range else {
             return nil
@@ -29,10 +27,8 @@ extension NSRegularExpression {
         return string[range]
     }
 
-    /**
-     - Parameter string: The string to look for the matches in
-     - Returns: The string matches found by the regular expression. Throws an error if an element of the string has no match.
-     */
+    /// - Parameter string: The string to look for the matches in
+    /// - Returns: The string matches found by the regular expression. Throws an error if an element of the string has no match.
     func matches(in string: String) throws -> [String] {
         let matches = self.matches(in: string, options: [], range: NSRange(location: 0, length: string.count))
 

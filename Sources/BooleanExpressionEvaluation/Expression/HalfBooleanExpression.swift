@@ -5,13 +5,11 @@
 
 import Foundation
 
-/**
- Store a left operand boolean and a logic operator for easier evaluation purposes.
- #### Representation examples
-    - true &&
-    - false ||
-    - true
- */
+/// Store a left operand boolean and a logic operator for easier evaluation purposes.
+/// #### Representation examples
+///    - true &&
+///    - false ||
+///    - true
 struct HalfBooleanExpression {
 
     /// Left boolean operand

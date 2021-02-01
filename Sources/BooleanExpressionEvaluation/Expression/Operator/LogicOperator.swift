@@ -47,11 +47,11 @@ extension LogicOperator {
 }
 
 extension LogicOperator {
-    /** Call this function if you want to prevent the default operator `&&` to work.
-    If you need to override the behavior of `&&`, simply insert a new operator with the same description*/
+    /// Call this function if you want to prevent the default operator `&&` to work.
+    // If you need to override the behavior of `&&`, simply insert a new operator with the same description
     func removeDefaultAnd() { Self.models.remove(.and) }
 
-    /** Call this function if you want to prevent the default operator `||` to work.
-    If you need to override the behavior of `||`, simply insert a new operator with the same description*/
+    /// Call this function if you want to prevent the default operator `||` to work.
+    /// If you need to override the behavior of `||`, simply insert a new operator with the same description
     func removeDefaultOr() { Self.models.remove(.or) }
 }

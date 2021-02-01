@@ -98,9 +98,7 @@ struct ExpressionEvaluator {
         currentOpenedBrackets -= 1
     }
 
-    /**
-     Reduce an array of `HalfBooleanExpression` to one
-     */
+    /// Reduce an array of `HalfBooleanExpression` to one
     func evaluate(booleanExpression: [HalfBooleanExpression]) -> HalfBooleanExpression? {
         // copy the boolean expression to modify it
         var booleanExpression = booleanExpression
