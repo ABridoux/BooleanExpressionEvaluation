@@ -60,7 +60,7 @@ class BooleanExpressionTokenizorTestsIntegration: XCTestCase {
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
                                         .logicInfixOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
+                                        .operand(.string("Fifi")), .comparisonOperator(.isIn), .operand(.variable("Ducks"))]
         let expectedTokenizdExpression: Expression = [.bracket(.opening),
                                                             .operand(.boolean(false)),
                                                       .logicInfixOperator(.and),

@@ -13,7 +13,12 @@ public struct Expression: Collection, CustomStringConvertible {
 
     // MARK: - Constants
 
-    static let operatorsPattern = "[\(Operator.regexPattern)\(ExpressionElement.LogicInfixOperator.regexPattern)\(ExpressionElement.LogicPrefixOperator.regexPattern)]+"
+    static var operatorsPattern: String {
+        "[\(Operator.regexPattern)" +
+        ExpressionElement.LogicInfixOperator.regexPattern +
+        "\(ExpressionElement.LogicPrefixOperator.regexPattern)]+" +
+        "|(\(Operator.regexKeywordPattern))+"
+    }
     static let bracketsPattern = #"[\(\)]+"#
 
     // MARK: - Properties
