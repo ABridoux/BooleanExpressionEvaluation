@@ -167,6 +167,26 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         XCTAssertTrue(result)
     }
 
+    func testIsInEscapedComma() throws {
+        variables["Ducks"] = #"Riri\, Fifi, Loulou"#
+        let expressionString = #"'Riri\, Fifi' isIn Ducks"#
+        var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+
+        let result = try XCTUnwrap(sut?.evaluateExpression())
+
+        XCTAssertTrue(result)
+    }
+
+    func testIsInEscapedComma2() throws {
+        variables["Ducks"] = #"Riri, Fifi\, Loulou"#
+        let expressionString = "'Fifi' isIn Ducks"
+        var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+
+        let result = try XCTUnwrap(sut?.evaluateExpression())
+
+        XCTAssertFalse(result)
+    }
+
     func testContains() throws {
         variables["variable"] = "Loulou"
         let expressionString = "variable contains 'oulo'"
