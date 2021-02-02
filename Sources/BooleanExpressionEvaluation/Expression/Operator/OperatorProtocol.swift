@@ -19,7 +19,7 @@ extension OperatorProtocol {
     }
 
     /// - Parameter element: Element to compare to the description
-    /// - Returns: `true` if the element is equald to `description`
+    /// - Returns: `true` if the element is equal to `description`
     public func validate(element: String) -> Self? {
         if description == element {
             return self

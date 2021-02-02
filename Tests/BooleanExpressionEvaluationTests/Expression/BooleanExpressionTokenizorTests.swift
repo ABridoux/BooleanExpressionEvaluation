@@ -39,59 +39,37 @@ class BooleanExpressionTokenizorTests: XCTestCase {
         sut.expression = [.operand(.number(1))]
 
         XCTAssertThrowsError(try sut.currentTokenBooleanValidate(), "") { error in
-            guard case ExpressionError.invalidExpression(_) = error else {
+            guard case ExpressionError.invalidExpression = error else {
                 XCTFail("Chaining a boolean with something else than a logic operator or a closing bracket should throw the invalidExpression error")
                 return
             }
         }
     }
 
-    func testCurrentTokenLogicOperatorNext() {
-        sut.currentToken = .logicOperator(.and)
+    func testCurrentTokenLogicOperatorNext() throws {
+        sut.currentToken = .logicInfixOperator(.and)
         sut.expression = stubExpression
 
-        do {
-            let element = try sut.currentTokenLogicOperatorOrOpeningBracketNextToken()
-            guard let unwrappedElement = element,
-                case let ExpressionElement.operand(.boolean(result)) = unwrappedElement else {
-                XCTFail("Comparison expression after a logic operator or an opening bracket tokenization should be a non-nil boolean operand")
-                return
-            }
-            XCTAssertTrue(result)
-        } catch {
-            XCTFail("Unwanted error: \(error.localizedDescription)")
-        }
+        let element = try XCTUnwrap(sut.currentTokenLogicInfixOperatorOrOpeningBracketNextToken())
+        XCTAssertTrue(element.isTrue)
     }
 
-    func testCurrentTokenOpeningBracketNext() {
+    func testCurrentTokenOpeningBracketNext() throws {
         sut.currentToken = .bracket(.opening)
         sut.expression = stubExpression
 
-        do {
-            let element = try sut.currentTokenLogicOperatorOrOpeningBracketNextToken()
-            guard let unwrappedElement = element,
-                case let ExpressionElement.operand(.boolean(result)) = unwrappedElement else {
-                XCTFail("Comparison expression after a logic operator or an opening bracket tokenization should be a non-nil boolean operand")
-                return
-            }
-            XCTAssertTrue(result)
-        } catch {
-            XCTFail("Unwtanded error: \(error.localizedDescription)")
-        }
+        let element = try XCTUnwrap(sut.currentTokenLogicInfixOperatorOrOpeningBracketNextToken())
+
+        XCTAssertTrue(element.isTrue)
     }
 
     func testCurrentTokenClosingBracketNext_ThrowsErrorIfNextTokenNotLogicOperator() {
         sut.currentToken = .bracket(.closing)
         sut.expression = [.operand(.string("gnōthi seauton"))]
 
-        do {
-            _ = try sut.currentTokenClosingBracketNextToken()
-            XCTFail("Chaining something else than a logic operator or a closing bracket with a closing bracket should throw the invalidGrammar error")
-        } catch {
-            guard case ExpressionError.invalidGrammar(_) = error else {
-                XCTFail("Chaining something else than a logic operator or a closing bracket with a closing bracket should throw the invalidGrammar error")
-                return
-            }
+        XCTAssertErrorsEqual(_ = try sut.currentTokenClosingBracketNextToken()) { (error) in
+            if case .invalidGrammar = error { return true }
+            return false
         }
     }
 
@@ -99,16 +77,16 @@ class BooleanExpressionTokenizorTests: XCTestCase {
 
     func testEvaluateSingleBooleanExpression_ThrowsIfCountNot1() {
         let expression: Expression = [.operand(.variable("variable")), .comparisonOperator(.equal), .operand(.boolean(true))]
-        XCTAssertThrowsError(try sut.evaluate(singleBooleanExpression: expression), "") { error in
-            guard case ExpressionError.invalidGrammar = error else {
-                XCTFail("Trying to evaluate a single boolean expression with more than 3 elements should throw the error ExpressionElement.incorrectGrammar")
-                return
-            }
+
+        XCTAssertErrorsEqual(try sut.evaluate(singleBooleanExpression: expression)) { (error) in
+            if case .invalidGrammar = error { return true }
+            return false
         }
     }
 
     func testEvaluateSingleBooleanExpression_ThrowsIfNoVariableAsOperand() {
         let expression: Expression = [.operand(.boolean(true))]
+
         XCTAssertThrowsError(try sut.evaluate(singleBooleanExpression: expression), "") { error in
             guard case ExpressionError.invalidGrammar = error else {
                 XCTFail("Trying to evaluate a single boolean expression with no undefined variable should throw the error ExpressionElement.undefinedVariable")
@@ -120,6 +98,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     func testEvaluateSingleBooleanExpression_ThrowsIfUndefinedVariable() {
         sut.variables.removeAll()
         let expression: Expression = [.operand(.variable("variable"))]
+
         XCTAssertThrowsError(try sut.evaluate(singleBooleanExpression: expression), "") { error in
             guard case ExpressionError.undefinedVariable = error else {
                 XCTFail("Trying to evaluate a single boolean expression with no variable operand should throw the error ExpressionElement.undefinedVariable")
@@ -131,6 +110,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     func testEvaluateSingleBooleanExpression_ThrowsIfVariableWithNoBooleanValue1() {
         sut.variables["variable"] = "1.5"
         let expression: Expression = [.operand(.variable("variable"))]
+
         XCTAssertThrowsError(try sut.evaluate(singleBooleanExpression: expression), "") { error in
             guard case ExpressionError.invalidGrammar = error else {
                 XCTFail("Trying to evaluate a single boolean expression with no boolean variable should throw the error ExpressionElement.invalidGrammar")
@@ -204,7 +184,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     }
 
     func testEvaluateComparison_ThrowsErrorDoesntHaveComparisonOperator() {
-        let expression: Expression = [.operand(.variable("a")), .logicOperator(.and), .operand(.number(3))]
+        let expression: Expression = [.operand(.variable("a")), .logicInfixOperator(.and), .operand(.number(3))]
 
         XCTAssertThrowsError(try sut.evaluate(comparison: expression), "") { error in
             guard error is ExpressionError else {

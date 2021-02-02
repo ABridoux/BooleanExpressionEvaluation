@@ -27,17 +27,17 @@ class BooleanExpressionTokenizorTestsIntegration: XCTestCase {
 
         let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
-                                        .logicOperator(.or),
+                                        .logicInfixOperator(.or),
                                             .operand(.variable("input")), .comparisonOperator(.equal), .operand(.string("Test"))]
         let expectedTokenizedExpression: Expression = [.bracket(.opening),
                                                             .operand(.boolean(false)),
-                                                      .logicOperator(.and),
+                                                      .logicInfixOperator(.and),
                                                             .operand(.boolean(true)),
                                                         .bracket(.closing),
-                                                        .logicOperator(.or),
+                                                        .logicInfixOperator(.or),
                                                             .operand(.boolean(true))]
         var sut = BooleanExpressionTokenizator(expression: expression, variables: variables)
 
@@ -56,17 +56,17 @@ class BooleanExpressionTokenizorTestsIntegration: XCTestCase {
 
         let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
-                                        .logicOperator(.or),
+                                        .logicInfixOperator(.or),
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
         let expectedTokenizdExpression: Expression = [.bracket(.opening),
                                                             .operand(.boolean(false)),
-                                                      .logicOperator(.and),
+                                                      .logicInfixOperator(.and),
                                                             .operand(.boolean(false)),
                                                         .bracket(.closing),
-                                                        .logicOperator(.or),
+                                                        .logicInfixOperator(.or),
                                                             .operand(.boolean(true))]
         var sut = BooleanExpressionTokenizator(expression: expression, variables: variables)
 

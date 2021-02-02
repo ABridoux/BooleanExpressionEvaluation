@@ -89,39 +89,34 @@ class ExpressionEvaluatorTests: XCTestCase {
 
     // MARK: Evaluate expression - Integration tests
 
-    func testEvaluateExpression1() {
+    func testEvaluateExpression() throws {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
-                                        .logicOperator(.or),
+                                        .logicInfixOperator(.or),
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
-        do {
-            let result = try sut.evaluateExpression()
-            XCTAssertTrue(result)
-        } catch {
-            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
-        }
+        XCTAssertTrue(try sut.evaluateExpression())
     }
 
-    func testEvaluateExpression2_UnbalancedBracketThrowsError() {
+    func testEvaluateExpression_UnbalancedBracketThrowsError() {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [  .operand(.variable("variable")), .comparisonOperator(.lesserThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
-                                        .logicOperator(.or),
+                                        .logicInfixOperator(.or),
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
@@ -133,15 +128,15 @@ class ExpressionEvaluatorTests: XCTestCase {
         }
     }
 
-    func testEvaluateExpression2_UndefinedVariable() {
+    func testEvaluateExpression_UndefinedVariable() {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [  .operand(.variable("variable")), .comparisonOperator(.lesserThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                        .logicOperator(.or),
+                                        .logicInfixOperator(.or),
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.variable("Fifi"))]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
@@ -154,17 +149,17 @@ class ExpressionEvaluatorTests: XCTestCase {
         }
     }
 
-    func testEvaluateExpression2_UselessBrackets1() {
+    func testEvaluateExpression_UselessBrackets1() {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
          let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                        .logicOperator(.and),
+                                        .logicInfixOperator(.and),
                                         .bracket(.opening),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                        .logicOperator(.or),
+                                        .logicInfixOperator(.or),
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),
                                         .bracket(.closing),
                                         .bracket(.closing)]
@@ -179,16 +174,16 @@ class ExpressionEvaluatorTests: XCTestCase {
         }
     }
 
-    func testEvaluateExpression2_UselessBrackets2() {
+    func testEvaluateExpression_UselessBrackets2() {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
          let expression: Expression = [.bracket(.opening), .bracket(.opening), .bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                        .logicOperator(.and),
+                                        .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                        .logicOperator(.or),
+                                        .logicInfixOperator(.or),
                                             .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),
                                         .bracket(.closing), .bracket(.closing), .bracket(.closing)]
 
@@ -202,16 +197,16 @@ class ExpressionEvaluatorTests: XCTestCase {
         }
     }
 
-    func testEvaluateExpression2_DebtTrueOr() {
+    func testEvaluateExpression_DebtTrueOr() {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [.operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(0.5)),
-                                      .logicOperator(.or),
+                                      .logicInfixOperator(.or),
                                       .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                      .logicOperator(.and),
-                                      .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),]
+                                      .logicInfixOperator(.and),
+                                      .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")) ]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 

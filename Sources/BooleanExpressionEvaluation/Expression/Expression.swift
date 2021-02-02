@@ -9,18 +9,18 @@ import Foundation
 public struct Expression: Collection, CustomStringConvertible {
 
     public typealias Element = ExpressionElement
-    public typealias ArrayType = [ExpressionElement]
+    public typealias Elements = [ExpressionElement]
 
     // MARK: - Constants
 
-    static let operatorsPattern = "[\(Operator.regexPattern)\(LogicOperator.regexPattern)]+"
+    static let operatorsPattern = "[\(Operator.regexPattern)\(ExpressionElement.LogicInfixOperator.regexPattern)\(ExpressionElement.LogicPrefixOperator.regexPattern)]+"
     static let bracketsPattern = #"[\(\)]+"#
 
     // MARK: - Properties
 
     // MARK: Collection
 
-    private var elements = ArrayType()
+    private var elements = Elements()
 
     public var startIndex: Int { elements.startIndex }
     public var endIndex: Int { elements.endIndex }
@@ -79,11 +79,11 @@ public struct Expression: Collection, CustomStringConvertible {
             var elementWithoutBrackets = String(element)
 
             // > 1 otherwise it is a sole bracket
-            if elementWithoutBrackets.hasPrefix("("), element.count > 1 {
+            if elementWithoutBrackets.hasPrefix(ExpressionElement.Bracket.opening.rawValue), element.count > 1 {
                 evaluatedExpression.append(.bracket(.opening))
                 elementWithoutBrackets.removeFirst()
             }
-            if elementWithoutBrackets.hasSuffix(")"), element.count > 1 {
+            if elementWithoutBrackets.hasSuffix(ExpressionElement.Bracket.closing.rawValue), element.count > 1 {
                 addClosingBracket = true
                 elementWithoutBrackets.removeLast()
             }
@@ -95,6 +95,7 @@ public struct Expression: Collection, CustomStringConvertible {
                 evaluatedExpression.append(.bracket(.closing))
             }
         }
+
         guard !evaluatedExpression.isEmpty else {
             throw ExpressionError.emptyExpression
         }
@@ -102,9 +103,13 @@ public struct Expression: Collection, CustomStringConvertible {
         elements = evaluatedExpression
     }
 
-    public init(_ elements: ArrayType) {
+    public init(_ elements: Elements) {
         regexPattern = Self.computeRegexPattern()
         self.elements = elements
+    }
+
+    public init(_ elements: Element...) {
+        self.init(elements)
     }
 
     // MARK: - Functions

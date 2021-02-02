@@ -5,8 +5,8 @@
 
 import Foundation
 
-public enum ExpressionError: Error, LocalizedError {
-    
+public enum ExpressionError: LocalizedError, Equatable {
+
     /// General error for undefined errors
     case invalidExpression(String)
     case invalidStringQuotation(String)

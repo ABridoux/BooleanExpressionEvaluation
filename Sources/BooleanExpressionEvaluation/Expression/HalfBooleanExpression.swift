@@ -16,7 +16,7 @@ struct HalfBooleanExpression {
     let boolean: Bool
 
     /// Logic operator. Can be nil if the `HalfBooleanExpression` is at the end of the expression as the last operand.
-    let logicOperator: LogicOperator?
+    let logicOperator: ExpressionElement.LogicInfixOperator?
 
     /**
      Evaluate a `HalfBooleanExpression` with another one as the right operand.
@@ -58,7 +58,7 @@ struct HalfBooleanExpression {
         } else {
             // the other expression doesn't have a logic operator, so we can simply return a boolean
             let result = logicOperator.evaluate(boolean, otherExpression.boolean)
-            return HalfBooleanExpression(boolean: result , logicOperator: nil)
+            return HalfBooleanExpression(boolean: result, logicOperator: nil)
         }
     }
 }
