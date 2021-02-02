@@ -287,7 +287,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     func testEvaluateComparison_ContainsLeftOperandVariable() {
         sut.variables["ducks"] = "Riri, Fifi, Loulou"
 
-        let result = try? sut.evaluateCleanComparison(.variable("ducks"), .contains, .string("Riri"))
+        let result = try? sut.evaluateCleanComparison(.string("Riri"), .isIn, .variable("ducks"))
 
         XCTAssertEqual(result, true)
     }
@@ -295,7 +295,7 @@ class BooleanExpressionTokenizorTests: XCTestCase {
     func testEvaluateComparison_ContainsRightOperandVariable() {
         sut.variables["duck"] = "Riri"
 
-        let result = try? sut.evaluateCleanComparison(.string("Riri, Fifi, Loulou"), .contains, .variable("duck"))
+        let result = try? sut.evaluateCleanComparison(.variable("duck"), .isIn, .string("Riri, Fifi, Loulou"))
 
         XCTAssertEqual(result, true)
     }

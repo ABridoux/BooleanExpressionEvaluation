@@ -24,7 +24,7 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
-        let expressionString = #"(variable == 1 && isCheck == false) || Ducks <: "Fifi""#
+        let expressionString = #"(variable == 1 && isCheck == false) || "Fifi" isIn Ducks"#
         var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
 
         let result = try XCTUnwrap(sut?.evaluateExpression())
@@ -37,7 +37,7 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi,  Loulou"
         variables["duck"] = "Riri"
-        let expressionString = #"variable == 1 || isCheck && Ducks <: duck"#
+        let expressionString = #"variable == 1 || isCheck && duck isIn Ducks"#
         var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
 
         let result = try XCTUnwrap(sut?.evaluateExpression())
@@ -74,7 +74,7 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi,  Loulou"
         variables["duck"] = "Riri"
-        let expressionString = #"variable != 1 || isCheck != true && Ducks <: duck"#
+        let expressionString = #"variable != 1 || isCheck != true && duck isIn Ducks"#
         var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
 
         let result = try XCTUnwrap(sut?.evaluateExpression())
@@ -133,5 +133,75 @@ class ExpressionEvaluatorTestsIntegration: XCTestCase {
         let result = try XCTUnwrap(sut?.evaluateExpression())
 
         XCTAssertTrue(result)
+    }
+
+    // MARK: - Test default operators
+
+    func testHasPrefix() throws {
+        variables["variable"] = "Loulou"
+        let expressionString = "variable hasPrefix 'Lou'"
+        var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+
+        let result = try XCTUnwrap(sut?.evaluateExpression())
+
+        XCTAssertTrue(result)
+    }
+
+    func testHasSuffix() throws {
+        variables["variable"] = "Loulou"
+        let expressionString = "variable hasSuffix 'lou'"
+        var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+
+        let result = try XCTUnwrap(sut?.evaluateExpression())
+
+        XCTAssertTrue(result)
+    }
+
+    func testIsIn() throws {
+        variables["Ducks"] = "Riri, Fifi, Loulou"
+        let expressionString = "'Fifi' isIn Ducks"
+        var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+
+        let result = try XCTUnwrap(sut?.evaluateExpression())
+
+        XCTAssertTrue(result)
+    }
+
+    func testContains() throws {
+        variables["variable"] = "Loulou"
+        let expressionString = "variable contains 'oulo'"
+        var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+
+        let result = try XCTUnwrap(sut?.evaluateExpression())
+
+        XCTAssertTrue(result)
+    }
+
+    func testMatches() throws {
+        variables["variable"] = "123"
+        let expressionString = "variable matches '[0-9]{3}'"
+        var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+
+        let result = try XCTUnwrap(sut?.evaluateExpression())
+
+        XCTAssertTrue(result)
+    }
+
+    func testMatches2() throws {
+        variables["variable"] = "Loulou"
+        let expressionString = "variable matches '.*ulou.*'"
+        var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+
+        let result = try XCTUnwrap(sut?.evaluateExpression())
+
+        XCTAssertTrue(result)
+    }
+
+    func testMatchesInvalidRegex() throws {
+        variables["variable"] = "123"
+        let expressionString = "variable matches '[0-9{3}'"
+        var sut = try ExpressionEvaluator(string: expressionString, variables: variables)
+
+        XCTAssertErrorsEqual(try sut?.evaluateExpression(), .invalidOperand(description: "The regular expression '[0-9{3}' is invalid"))
     }
 }

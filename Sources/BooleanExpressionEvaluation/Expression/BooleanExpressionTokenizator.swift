@@ -205,19 +205,19 @@ struct BooleanExpressionTokenizator {
         switch remainingOperand {
 
         case .string(let string):
-            result = isLeftOperandAVariable ? comparisonOperator.evaluate(variableValue, string) : comparisonOperator.evaluate(string, variableValue)
+            result = try isLeftOperandAVariable ? comparisonOperator.evaluate(variableValue, string) : comparisonOperator.evaluate(string, variableValue)
 
         case .number(let double):
             guard let doubleVariableValue = Double(variableValue) else {
                 throw ExpressionError.mismatchingType
             }
-            result = isLeftOperandAVariable ? comparisonOperator.evaluate(doubleVariableValue, double) : comparisonOperator.evaluate(double, doubleVariableValue)
+            result = try isLeftOperandAVariable ? comparisonOperator.evaluate(doubleVariableValue, double) : comparisonOperator.evaluate(double, doubleVariableValue)
 
         case .boolean(let boolean):
             guard let booleanVariableValue = Bool(variableValue) else {
                 throw ExpressionError.mismatchingType
             }
-            result = isLeftOperandAVariable ? comparisonOperator.evaluate(booleanVariableValue, boolean) : comparisonOperator.evaluate(boolean, booleanVariableValue)
+            result = try isLeftOperandAVariable ? comparisonOperator.evaluate(booleanVariableValue, boolean) : comparisonOperator.evaluate(boolean, booleanVariableValue)
 
         case .variable(let otherVariableName):
             guard let otherVariableValue = variables[otherVariableName] else { return false }
@@ -236,12 +236,12 @@ struct BooleanExpressionTokenizator {
         var result: Bool?
 
         if let leftDouble = Double(leftVariableValue), let rightDouble = Double(rightVariableValue) {
-            result = comparisonOperator.evaluate(leftDouble, rightDouble)
+            result = try comparisonOperator.evaluate(leftDouble, rightDouble)
         } else if let leftBoolean = Bool(leftVariableValue), let rightBoolean = Bool(rightVariableValue) {
-            result = comparisonOperator.evaluate(leftBoolean, rightBoolean)
+            result = try comparisonOperator.evaluate(leftBoolean, rightBoolean)
         } else {
             // string comparison
-            result = comparisonOperator.evaluate(leftVariableValue, rightVariableValue)
+            result = try comparisonOperator.evaluate(leftVariableValue, rightVariableValue)
         }
 
         if let unwrappedResult = result {

@@ -9,16 +9,17 @@ public struct Operator: OperatorProtocol {
 
     // MARK: - Constants
 
-    public typealias Evaluation = (Any, Any) -> Bool?
+    public typealias Evaluation = (Any, Any) throws -> Bool?
 
     // MARK: - Properties
 
     public var description: String
+    public var isKeyword: Bool
 
     public static var models: Set<Operator> = [.equal, .nonEqual,
                                                .greaterThan, .greaterThanOrEqual,
                                                .lesserThan, .lesserThanOrEqual,
-                                               .contains,
+                                               .isIn, .contains, .matches,
                                                .hasPrefix, .hasSuffix]
 
     /// Closure to evaluate two operands
@@ -26,8 +27,9 @@ public struct Operator: OperatorProtocol {
 
     // MARK: - Initialization
 
-    public init(_ description: String, evaluation: @escaping Evaluation) {
+    public init(_ description: String, isKeyword: Bool = false, evaluation: @escaping Evaluation) {
         self.description = description
+        self.isKeyword = isKeyword
         self.evaluate = evaluation
     }
 }
@@ -97,18 +99,37 @@ extension Operator {
         return nil
     }}
 
-    static var contains: Operator { Operator("<:") { (lhs, rhs) in
+    static var contains: Operator { Operator("contains", isKeyword: true) { (lhs, rhs) in
         guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
-        let splittedLhs = lhs.split(separator: ",").map { String($0.trimmingCharacters(in: .whitespaces)) }
-        return splittedLhs.contains(rhs)
+        return lhs.contains(rhs)
     }}
 
-    static var hasPrefix: Operator { Operator("~=") { (lhs, rhs) in
+    static var isIn: Operator { Operator("isIn", isKeyword: true) { (lhs, rhs) in
+        guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
+        let splittedRhs = rhs.split(separator: ",").map { String($0.trimmingCharacters(in: .whitespaces)) }
+        return splittedRhs.contains(lhs)
+    }}
+
+    static var matches: Operator { Operator("matches", isKeyword: true) { (lhs, rhs) in
+        guard
+            let lhs = lhs as? String,
+            let rhs = rhs as? String
+        else { return nil }
+
+        do {
+            let regex = try NSRegularExpression(pattern: rhs)
+            return regex.validate(lhs)
+        } catch {
+            throw ExpressionError.invalidOperand(description: "The regular expression '\(rhs)' is invalid")
+        }
+    }}
+
+    static var hasPrefix: Operator { Operator("hasPrefix", isKeyword: true) { (lhs, rhs) in
         guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
         return lhs.hasPrefix(rhs)
     }}
 
-    static var hasSuffix: Operator { Operator("=~") { (lhs, rhs) in
+    static var hasSuffix: Operator { Operator("hasSuffix", isKeyword: true) { (lhs, rhs) in
         guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
         return lhs.hasSuffix(rhs)
     }}
@@ -142,5 +163,5 @@ extension Operator {
 
     /// Call this function if you want to prevent the default operator `<:` to work.
     /// If you need to override the behavior of `<:`, simply update a new operator with the same description
-    func removeDefaultContains() { Self.models.remove(.contains) }
+    func removeDefaultContains() { Self.models.remove(.isIn) }
 }

@@ -100,7 +100,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
                                         .logicInfixOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
+                                        .operand(.string("Fifi")), .comparisonOperator(.isIn), .operand(.variable("Ducks"))]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
@@ -117,7 +117,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
                                         .logicInfixOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
+                                            .operand(.variable("Ducks")), .comparisonOperator(.isIn), .operand(.string("Fifi"))]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
         XCTAssertThrowsError(try sut.evaluateExpression(), "") { error in
@@ -137,7 +137,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                       .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .logicInfixOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.variable("Fifi"))]
+                                            .operand(.variable("Ducks")), .comparisonOperator(.isIn), .operand(.variable("Fifi"))]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
@@ -160,7 +160,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                         .bracket(.opening),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .logicInfixOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),
+                                            .operand(.variable("Ducks")), .comparisonOperator(.isIn), .operand(.string("Fifi")),
                                         .bracket(.closing),
                                         .bracket(.closing)]
 
@@ -184,7 +184,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                         .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .logicInfixOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),
+                                        .operand(.string("Fifi")), .comparisonOperator(.isIn), .operand(.variable("Ducks")),
                                         .bracket(.closing), .bracket(.closing), .bracket(.closing)]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
@@ -206,7 +206,7 @@ class ExpressionEvaluatorTests: XCTestCase {
                                       .logicInfixOperator(.or),
                                       .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                       .logicInfixOperator(.and),
-                                      .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")) ]
+                                      .operand(.variable("Ducks")), .comparisonOperator(.isIn), .operand(.string("Fifi")) ]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 

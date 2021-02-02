@@ -18,6 +18,7 @@ public enum ExpressionError: LocalizedError, Equatable {
     case unbalancedBrackets
     case mismatchingType
     case wrongOperatorAndOperandsAssociation
+    case invalidOperand(description: String)
 
     public var errorDescription: String? {
         switch self {
@@ -31,6 +32,7 @@ public enum ExpressionError: LocalizedError, Equatable {
         case .unbalancedBrackets: return "The expression contains unbaled brackets"
         case .mismatchingType: return "The types of the two operands mistmatch"
         case .wrongOperatorAndOperandsAssociation: return "The operator cannot be applied to the operands because they do not have the rigth type"
+        case .invalidOperand(let description): return description
         }
     }
 }

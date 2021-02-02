@@ -15,6 +15,26 @@ extension NSRegularExpression {
         return string[firstMatch.range] == string
     }
 
+    /// Validate a string if the first match found by the regex is the overall string
+    func validate(_ string: String) -> Bool {
+        guard
+            let firstMatch = firstMatch(in: string, options: [], range: NSRange(location: 0, length: string.count)),
+            firstMatch.range.length >= 0
+        else {
+            return false
+        }
+
+        if firstMatch.range.length == 0 {
+            if string.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        return string[firstMatch.range] == string
+    }
+
     /// Characters that has to be quoted to be used in a regular expression
     static var charactersToQuote: [String] { ["*", "?", "+", "[", "(", ")", "{", "}", "^", "$", "|", "\\", ".", "/", "="] }
 
