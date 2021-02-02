@@ -5,16 +5,14 @@
 
 import Foundation
 
-/**
- Responsible to transform an `Expression` with contains comparison as `variable > 2` to a boolean expression which
- contains only `false` and `true`, the logic operators and brackets
- */
+ /// Responsible to transform an `Expression` wich contains comparison such as `variable > 2` to a boolean expression which
+ /// contains only `false` and `true`, the logic operators and brackets
 struct BooleanExpressionTokenizator {
 
     // MARK: - Properties
 
     var expression: Expression
-    var currentToken = ExpressionElement.logicOperator(.or)
+    var currentToken = ExpressionElement.logicInfixOperator(.or)
 
     /// Stores the variables which are present in the expression
     var variables: [String: String]
@@ -43,12 +41,19 @@ struct BooleanExpressionTokenizator {
         var nextToken: ExpressionElement?
 
         switch currentToken {
+
         case .operand(.boolean):
             nextToken = try currentTokenBooleanValidate()
-        case .logicOperator, .bracket(.opening):
-            nextToken = try currentTokenLogicOperatorOrOpeningBracketNextToken()
+
+        case .logicPrefixOperator:
+            nextToken = try currentTokenLogicPrefixOperator()
+
+        case .logicInfixOperator, .bracket(.opening):
+            nextToken = try currentTokenLogicInfixOperatorOrOpeningBracketNextToken()
+
         case .bracket(.closing):
             nextToken = try currentTokenClosingBracketNextToken()
+
         default:
             break
         }
@@ -57,11 +62,10 @@ struct BooleanExpressionTokenizator {
     }
 
     mutating func currentTokenBooleanValidate() throws -> ExpressionElement? {
-        guard let nextToken = expression.popFirst() else {
-            return nil
-        }
+        guard let nextToken = expression.popFirst() else { return nil }
+
         switch nextToken {
-        case .logicOperator, .bracket(.closing):
+        case .logicInfixOperator, .bracket(.closing):
             return nextToken
         default:
             throw ExpressionError.invalidExpression("Chaining a boolean with \(nextToken.description) is invalid")
@@ -69,40 +73,62 @@ struct BooleanExpressionTokenizator {
     }
 
     /// Validate a next token when the current one is a logic operator or an opening bracket and returns it
-    mutating func currentTokenLogicOperatorOrOpeningBracketNextToken() throws -> ExpressionElement? {
-        guard let nextElement = expression.popFirst() else {
-            return nil
-        }
+    mutating func currentTokenLogicInfixOperatorOrOpeningBracketNextToken() throws -> ExpressionElement? {
+        // checkout the element following the logic infix operator or closing bracket
+        guard let nextElement = expression.popFirst() else { return nil }
 
-        // validated if the next element is an opening bracket
-        if case let ExpressionElement.bracket(bracket) = nextElement, bracket == .opening {
+        if case .logicPrefixOperator = nextElement {
             return nextElement
         }
 
-        if case ExpressionElement.comparisonOperator? = expression.first {
+        // validated if the next element is an opening bracket
+        if case let .bracket(bracket) = nextElement, bracket == .opening {
+            return nextElement
+        }
+
+        switch expression.first {
+
+        case .comparisonOperator:
             /** we have a comparison operator as the next element so
             try to get an expression from the next two elements with the current one*/
             let comparisonExpression = [nextElement, expression.popFirst(), expression.popFirst()].compactMap { $0 }
             guard !comparisonExpression.isEmpty else {
-                throw ExpressionError.invalidGrammar("Only a comparison expression can follow a \(currentToken.description)")
+                throw ExpressionError.invalidGrammar("Only a comparison expression can follow \(currentToken.description)")
             }
-            let result = try evaluate(comparison: Expression(comparisonExpression)) // using .map seems to prevent to initialize the Expression as an array literal
+            // using .map seems to prevent to initialize the Expression as an array literal
+            let result = try evaluate(comparison: Expression(comparisonExpression))
             return .operand(.boolean(result))
-        } else {
+
+        default:
             // try to get a single element expression from the next element
-            let singleExpressionResult = try evaluate(singleBooleanExpression: Expression([nextElement]))
+            let singleExpressionResult = try evaluate(singleBooleanExpression: Expression(nextElement))
             return .operand(.boolean(singleExpressionResult))
+        }
+    }
+
+    mutating func currentTokenLogicPrefixOperator() throws -> ExpressionElement? {
+        // checkout the element following the logic prefix operator
+        guard let nextElement = expression.popFirst() else { return nil }
+
+        switch nextElement {
+        case .bracket(.opening):
+            return nextElement
+
+        case .operand(.variable):
+            let singleExpressionResult = try evaluate(singleBooleanExpression: Expression(nextElement))
+            return .operand(.boolean(!singleExpressionResult))
+
+        default:
+            return nil
         }
     }
 
     /// Validate a next token when the current one is a closing bracket and returns it
     mutating func currentTokenClosingBracketNextToken() throws -> ExpressionElement? {
-        guard let nextToken = expression.popFirst() else {
-            return nil
-        }
+        guard let nextToken = expression.popFirst() else { return nil }
 
         switch nextToken {
-        case .logicOperator, .bracket(.closing):
+        case .logicInfixOperator, .bracket(.closing):
             return nextToken
         default:
             throw ExpressionError.invalidGrammar("Chaining a closing bracket with \(nextToken.description) is invalid")
@@ -133,7 +159,7 @@ struct BooleanExpressionTokenizator {
 
     func evaluate(singleBooleanExpression expression: Expression) throws -> Bool {
         guard expression.count == 1 else {
-            throw ExpressionError.invalidGrammar("Single boolean expression with more than two elements: \(expression.description)")
+            throw ExpressionError.invalidGrammar("Single boolean expression with more than 1 element: \(expression.description)")
         }
         guard case let ExpressionElement.operand(.variable(variableName)) = expression[0] else {
             throw ExpressionError.invalidGrammar("Trying to evaluate a single element which is not a variable: \(expression.description)")

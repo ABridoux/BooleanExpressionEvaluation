@@ -45,8 +45,8 @@ class ExpressionElementTests: XCTestCase {
     }
 
     func testInitOperand_Bool() {
-        XCTAssertEqual(try? ExpressionElement.Operand("true"), ExpressionElement.Operand.boolean(true))
-        XCTAssertEqual(try? ExpressionElement.Operand("false"), ExpressionElement.Operand.boolean(false))
+        XCTAssertEqual(try? ExpressionElement.Operand("true"), .boolean(true))
+        XCTAssertEqual(try? ExpressionElement.Operand("false"), .boolean(false))
     }
 
     func testInitOperand_Variable() {

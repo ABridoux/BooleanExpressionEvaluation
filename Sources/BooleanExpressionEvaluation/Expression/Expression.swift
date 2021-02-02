@@ -9,18 +9,18 @@ import Foundation
 public struct Expression: Collection, CustomStringConvertible {
 
     public typealias Element = ExpressionElement
-    public typealias ArrayType = [ExpressionElement]
+    public typealias Elements = [ExpressionElement]
 
     // MARK: - Constants
 
-    static let operatorsPattern = "[\(Operator.regexPattern)\(LogicOperator.regexPattern)]+"
+    static let operatorsPattern = "[\(Operator.regexPattern)\(ExpressionElement.LogicInfixOperator.regexPattern)\(ExpressionElement.LogicPrefixOperator.regexPattern)]+"
     static let bracketsPattern = #"[\(\)]+"#
 
     // MARK: - Properties
 
     // MARK: Collection
 
-    private var elements = ArrayType()
+    private var elements = Elements()
 
     public var startIndex: Int { elements.startIndex }
     public var endIndex: Int { elements.endIndex }
@@ -103,9 +103,13 @@ public struct Expression: Collection, CustomStringConvertible {
         elements = evaluatedExpression
     }
 
-    public init(_ elements: ArrayType) {
+    public init(_ elements: Elements) {
         regexPattern = Self.computeRegexPattern()
         self.elements = elements
+    }
+
+    public init(_ elements: Element...) {
+        self.init(elements)
     }
 
     // MARK: - Functions

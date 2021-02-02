@@ -115,7 +115,7 @@ extension Operator {
 }
 
 extension Operator {
-    
+
     /// Call this function if you want to prevent the default operator `==` to work.
     /// If you need to override the behavior of `==`, simply update a new operator with the same description
     func removeDefaultEqual() { Self.models.remove(.equal) }

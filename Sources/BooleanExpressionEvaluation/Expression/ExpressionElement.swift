@@ -10,18 +10,28 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
     // MARK: - Properties
 
     case comparisonOperator(Operator)
-    case logicOperator(LogicOperator)
+    case logicPrefixOperator(LogicPrefixOperator)
+    case logicInfixOperator(LogicInfixOperator)
     case bracket(Bracket)
     case operand(Operand)
 
-    // MARK: - Associated enums
+    /// The boolean value if the element is a boolean operand
+    var isTrue: Bool {
+        guard
+            case let .operand(operand) = self,
+            case let .boolean(bool) = operand
+        else { return false }
+
+        return bool
+    }
 
     // MARK: - Properties
 
     public var description: String {
         switch self {
         case .comparisonOperator(let comparisonOperator): return comparisonOperator.description
-        case .logicOperator(let logicOperator): return logicOperator.description
+        case .logicPrefixOperator(let logicOperator): return logicOperator.description
+        case .logicInfixOperator(let logicOperator): return logicOperator.description
         case .bracket(let bracket): return bracket.rawValue
         case .operand(let operand): return operand.description
         }
@@ -32,8 +42,10 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
     init(element: String, variablesRegexPattern: String? = nil) throws {
         if let comparisonOperator = Operator.findModel(with: element) {
             self = .comparisonOperator(comparisonOperator)
-        } else if let logicOperator = LogicOperator.findModel(with: element) {
-            self = .logicOperator(logicOperator)
+        } else if let logicOperator = LogicPrefixOperator.findModel(with: element) {
+            self = .logicPrefixOperator(logicOperator)
+        } else if let logicOperator = LogicInfixOperator.findModel(with: element) {
+            self = .logicInfixOperator(logicOperator)
         } else if let bracket = Bracket(rawValue: element) {
             self = .bracket(bracket)
         } else {
