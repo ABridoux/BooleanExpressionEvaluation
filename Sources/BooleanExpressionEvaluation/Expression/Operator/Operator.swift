@@ -106,8 +106,24 @@ extension Operator {
 
     static var isIn: Operator { Operator("isIn", isKeyword: true) { (lhs, rhs) in
         guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
-        let splittedRhs = rhs.split(separator: ",").map { String($0.trimmingCharacters(in: .whitespaces)) }
-        return splittedRhs.contains(lhs)
+        var escapedComma = false
+
+        return rhs
+            .split(separator: ",")
+            .reduce([String]()) { (result, substring) in
+                var result = result
+
+                if escapedComma, let last = result.last {
+                    result[result.count - 1] = last + "," + String(substring)
+                } else {
+                    result.append(String(substring))
+                }
+                
+                escapedComma = substring.hasSuffix("\\")
+                return result
+            }
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) } // trim after a possible matches union
+            .contains(lhs)
     }}
 
     static var matches: Operator { Operator("matches", isKeyword: true) { (lhs, rhs) in
