@@ -220,9 +220,13 @@ struct BooleanExpressionTokenizator {
             result = try isLeftOperandAVariable ? comparisonOperator.evaluate(booleanVariableValue, boolean) : comparisonOperator.evaluate(boolean, booleanVariableValue)
 
         case .variable(let otherVariableName):
-            guard let otherVariableValue = variables[otherVariableName] else { return false }
-            result = isLeftOperandAVariable ? try evaluate(leftVariableValue: variableValue, comparisonOperator: comparisonOperator, rightVariableValue: otherVariableValue)
-            : try evaluate(leftVariableValue: otherVariableValue, comparisonOperator: comparisonOperator, rightVariableValue: variableValue)
+            guard let otherVariableValue = variables[otherVariableName] else {
+                throw ExpressionError.undefinedVariable(otherVariableName)
+            }
+
+            result = isLeftOperandAVariable ?
+                try evaluate(leftVariableValue: variableValue, comparisonOperator: comparisonOperator, rightVariableValue: otherVariableValue) :
+                try evaluate(leftVariableValue: otherVariableValue, comparisonOperator: comparisonOperator, rightVariableValue: variableValue)
         }
 
         guard let unwrappedResult = result else {

@@ -118,7 +118,7 @@ extension Operator {
                 } else {
                     result.append(String(substring))
                 }
-                
+
                 escapedComma = substring.hasSuffix("\\")
                 return result
             }
