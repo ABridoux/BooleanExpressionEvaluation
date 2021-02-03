@@ -23,15 +23,15 @@ public enum ExpressionError: LocalizedError, Equatable {
     public var errorDescription: String? {
         switch self {
         case .invalidExpression(let description): return description
-        case .invalidStringQuotation(let string): return "Invalid string quotation: \(string)"
-        case .invalidVariableName(let name): return #"Invalid variable name or element: "\#(name)""#
-        case .emptyExpression: return "The expression should not be empty"
-        case .undefinedVariable(let variable): return "Undefined variable: \(variable)"
-        case .incorrectElement(let element): return #"Incorrect element in the expression: "\#(element)""#
-        case .invalidGrammar(let string): return "Invalid elements chaining: \(string)"
-        case .unbalancedBrackets: return "The expression contains unbaled brackets"
-        case .mismatchingType: return "The types of the two operands mistmatch"
-        case .wrongOperatorAndOperandsAssociation: return "The operator cannot be applied to the operands because they do not have the rigth type"
+        case .invalidStringQuotation(let string): return "Invalid string quotation: \(string)."
+        case .invalidVariableName(let name): return #"Invalid variable name or element: "\#(name)"."#
+        case .emptyExpression: return "The expression should not be empty."
+        case .undefinedVariable(let variable): return "Undefined variable: \(variable)."
+        case .incorrectElement(let element): return #"Incorrect element in the expression: "\#(element)"."#
+        case .invalidGrammar(let string): return "Invalid elements chaining: \(string)."
+        case .unbalancedBrackets: return "The expression contains unbaled brackets."
+        case .mismatchingType: return "The types of the two operands mistmatch."
+        case .wrongOperatorAndOperandsAssociation: return "The operator cannot be applied to the operands because they do not have the rigth type."
         case .invalidOperand(let description): return description
         }
     }
