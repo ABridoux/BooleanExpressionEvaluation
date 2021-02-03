@@ -9,7 +9,7 @@ public struct Operator: OperatorProtocol {
 
     // MARK: - Constants
 
-    public typealias Evaluation = (Any, Any) throws -> Bool?
+    public typealias Evaluation = (Any, Any) throws -> Bool
 
     // MARK: - Properties
 
@@ -38,74 +38,100 @@ extension Operator {
     public static func == (lhs: Operator, rhs: Operator) -> Bool {
         return lhs.description == rhs.description
     }
+
+    static func cast<T>(_ value: Any, as type: T.Type) throws -> T {
+        if let casted = value as? T {
+            return casted
+        }
+        throw ExpressionError.mismatchingType
+    }
 }
 
 extension Operator {
-    static var equal: Operator { Operator("==") { (lhs, rhs) in
-        if let lhs = lhs as? String, let rhs = rhs as? String {
+
+    public static var equal: Operator { Operator("==") { (lhs, rhs) in
+        if let lhs = lhs as? Double {
+            let rhs = try cast(rhs, as: Double.self)
             return lhs == rhs
-        } else if let lhs = lhs as? Double, let rhs = rhs as? Double {
+        } else if let lhs = lhs as? Bool {
+            let rhs = try cast(rhs, as: Bool.self)
             return lhs == rhs
-        } else if let lhs = lhs as? Bool, let rhs = rhs as? Bool {
+        } else if let lhs = lhs as? String {
+            let rhs = try cast(rhs, as: String.self)
             return lhs == rhs
         }
-        return nil
+        throw ExpressionError.mismatchingType
     }}
 
-    static var nonEqual: Operator { Operator("!=") { (lhs, rhs) in
-        if let lhs = lhs as? String, let rhs = rhs as? String {
+    public static var nonEqual: Operator { Operator("!=") { (lhs, rhs) in
+        if let lhs = lhs as? Double {
+            let rhs = try cast(rhs, as: Double.self)
             return lhs != rhs
-        } else if let lhs = lhs as? Double, let rhs = rhs as? Double {
+        } else if let lhs = lhs as? Bool {
+            let rhs = try cast(rhs, as: Bool.self)
             return lhs != rhs
-        } else if let lhs = lhs as? Bool, let rhs = rhs as? Bool {
+        } else if let lhs = lhs as? String {
+            let rhs = try cast(rhs, as: String.self)
             return lhs != rhs
         }
-        return nil
+        throw ExpressionError.mismatchingType
     }}
 
-    static var greaterThan: Operator { Operator(">") { (lhs, rhs) in
-        if let lhs = lhs as? String, let rhs = rhs as? String {
+    public static var greaterThan: Operator { Operator(">") { (lhs, rhs) in
+        if let lhs = lhs as? Double {
+            let rhs = try cast(rhs, as: Double.self)
             return lhs > rhs
-        } else if let lhs = lhs as? Double, let rhs = rhs as? Double {
+        } else if let lhs = lhs as? String {
+            let rhs = try cast(rhs, as: String.self)
             return lhs > rhs
         }
-        return nil
+        throw ExpressionError.mismatchingType
     }}
 
-    static var greaterThanOrEqual: Operator { Operator(">=") { (lhs, rhs) in
-        if let lhs = lhs as? String, let rhs = rhs as? String {
+    public static var greaterThanOrEqual: Operator { Operator(">=") { (lhs, rhs) in
+        if let lhs = lhs as? Double {
+            let rhs = try cast(rhs, as: Double.self)
             return lhs >= rhs
-        } else if let lhs = lhs as? Double, let rhs = rhs as? Double {
+        } else if let lhs = lhs as? String {
+            let rhs = try cast(rhs, as: String.self)
             return lhs >= rhs
         }
-        return nil
+        throw ExpressionError.mismatchingType
     }}
 
-    static var lesserThan: Operator { Operator("<") { (lhs, rhs) in
-        if let lhs = lhs as? String, let rhs = rhs as? String {
+    public static var lesserThan: Operator { Operator("<") { (lhs, rhs) in
+        if let lhs = lhs as? Double {
+            let rhs = try cast(rhs, as: Double.self)
             return lhs < rhs
-        } else if let lhs = lhs as? Double, let rhs = rhs as? Double {
+        } else if let lhs = lhs as? String {
+            let rhs = try cast(rhs, as: String.self)
             return lhs < rhs
         }
-        return nil
+        throw ExpressionError.mismatchingType
     }}
 
-    static var lesserThanOrEqual: Operator { Operator("<=") { (lhs, rhs) in
-        if let lhs = lhs as? String, let rhs = rhs as? String {
+    public static var lesserThanOrEqual: Operator { Operator("<=") { (lhs, rhs) in
+        if let lhs = lhs as? Double {
+            let rhs = try cast(rhs, as: Double.self)
             return lhs <= rhs
-        } else if let lhs = lhs as? Double, let rhs = rhs as? Double {
+        } else if let lhs = lhs as? String {
+            let rhs = try cast(rhs, as: String.self)
             return lhs <= rhs
         }
-        return nil
+        throw ExpressionError.mismatchingType
     }}
 
-    static var contains: Operator { Operator("contains", isKeyword: true) { (lhs, rhs) in
-        guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
+    public static var contains: Operator { Operator("contains", isKeyword: true) { (lhs, rhs) in
+        guard let lhs = lhs as? String, let rhs = rhs as? String else {
+            throw ExpressionError.mismatchingType
+        }
         return lhs.contains(rhs)
     }}
 
-    static var isIn: Operator { Operator("isIn", isKeyword: true) { (lhs, rhs) in
-        guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
+    public static var isIn: Operator { Operator("isIn", isKeyword: true) { (lhs, rhs) in
+        guard let lhs = lhs as? String, let rhs = rhs as? String else {
+            throw ExpressionError.mismatchingType
+        }
         var escapedComma = false
 
         return rhs
@@ -126,11 +152,13 @@ extension Operator {
             .contains(lhs)
     }}
 
-    static var matches: Operator { Operator("matches", isKeyword: true) { (lhs, rhs) in
+    public static var matches: Operator { Operator("matches", isKeyword: true) { (lhs, rhs) in
         guard
             let lhs = lhs as? String,
             let rhs = rhs as? String
-        else { return nil }
+        else {
+            throw ExpressionError.mismatchingType
+        }
 
         do {
             let regex = try NSRegularExpression(pattern: rhs)
@@ -140,44 +168,24 @@ extension Operator {
         }
     }}
 
-    static var hasPrefix: Operator { Operator("hasPrefix", isKeyword: true) { (lhs, rhs) in
-        guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
-        return lhs.hasPrefix(rhs)
+    public static var hasPrefix: Operator { Operator("hasPrefix", isKeyword: true) { (lhs, rhs) in
+        guard let stringLhs = lhs as? String, let stringRhs = rhs as? String else {
+            throw ExpressionError.mismatchingType
+        }
+        return stringLhs.hasPrefix(stringRhs)
     }}
 
-    static var hasSuffix: Operator { Operator("hasSuffix", isKeyword: true) { (lhs, rhs) in
-        guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
+    public static var hasSuffix: Operator { Operator("hasSuffix", isKeyword: true) { (lhs, rhs) in
+        guard let lhs = lhs as? String, let rhs = rhs as? String else {
+            throw ExpressionError.mismatchingType
+        }
         return lhs.hasSuffix(rhs)
     }}
 }
 
 extension Operator {
 
-    /// Call this function if you want to prevent the default operator `==` to work.
-    /// If you need to override the behavior of `==`, simply update a new operator with the same description
-    func removeDefaultEqual() { Self.models.remove(.equal) }
-
-    /// Call this function if you want to prevent the default operator `!=` to work.
-    /// If you need to override the behavior of `!=`, simplyupdate a new operator with the same description
-    func removeDefaultNonEqual() { Self.models.remove(.nonEqual) }
-
-    /// Call this function if you want to prevent the default operator `>` to work.
-    /// If you need to override the behavior of `>`, simply update a new operator with the same description
-    func removeDefaultGreaterThan() { Self.models.remove(.greaterThan) }
-
-    /// Call this function if you want to prevent the default operator `>=` to work.
-    /// If you need to override the behavior of `>=`, simply update a new operator with the same description
-    func removeDefaultGreaterThanOrEqual() { Self.models.remove(.greaterThanOrEqual) }
-
-    /// Call this function if you want to prevent the default operator `<` to work.
-    /// If you need to override the behavior of `<`, simply update a new operator with the same description
-    func removeDefaultLesserThan() { Self.models.remove(.lesserThan) }
-
-    /// Call this function if you want to prevent the default operator `<=` to work.
-    /// If you need to override the behavior of `<=`, simply update a new operator with the same description
-    func removeDefaultLesserThanOrEqual() { Self.models.remove(.lesserThanOrEqual) }
-
-    /// Call this function if you want to prevent the default operator `<:` to work.
-    /// If you need to override the behavior of `<:`, simply update a new operator with the same description
-    func removeDefaultContains() { Self.models.remove(.isIn) }
+    public static func removeFromModels(model: Operator) {
+        models.remove(model)
+    }
 }
