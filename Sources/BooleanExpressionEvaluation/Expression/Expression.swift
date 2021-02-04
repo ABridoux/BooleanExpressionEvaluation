@@ -68,6 +68,16 @@ public struct Expression: Collection, CustomStringConvertible {
         return variableNames
     }
 
+    /// The operators involved the the expression
+    public var operators: [Operator] {
+        elements.compactMap { element in
+            if case let .comparisonOperator(comparisonOperator) = element {
+                return comparisonOperator
+            }
+            return nil
+        }
+    }
+
     // MARK: - Initialiation
 
     public init(_ stringExpression: String, variablesRegexPattern: String? = nil) throws {
