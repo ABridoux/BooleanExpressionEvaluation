@@ -45,7 +45,7 @@ To evaluate a String, create an `Expression`, passing the string as the paramete
 
 For example:
 
-(Note that the use of the raw string syntaxt `#""#`  from Swift 5.0 is used to allow the use of double quotes without quoting them with `\`)
+(Note that the use of the raw string syntax `#""#`  from Swift 5.0 is used to allow the use of double quotes without quoting them with `\`)
 
 ```swift
 let variables = ["userAge": "15", "userName": "Morty"]
@@ -103,30 +103,30 @@ There are two types of operators available in an expression: comparison operator
 - `>=` for *greater than or equal*
 - `<` for *lesser than*
 - `<=` for *lesser than or equal*
-- `<:` for contains. The result is true is the left operand contains the right one. The left operand has to be filled with values separated by commas. For example: if the variable `Ducks` has "Riri, Fifi, Loulou" for value, the comparison `Ducks <: "Riri"` is evaluated as true.
-- `~=` for *hasPrefix*
-- `=~` for *hasSuffix*
+- `isIn` The result is true is the left operand is contained the right one which is provided as a list of string values. The right operand has to be filled with values separated by commas. For example: if the variable `Ducks` has "Riri, Fifi, Loulou" for value, the comparison `'Riri' isIn Ducks ` is evaluated as true. It's possible to escape a comma with "\".
+- `hasPrefix`
+- `hasSuffix`
+- `contains`: true when the left string contains the right string.
+- `matches`: true when the left operand matches the right operand, given as a regular expression.
 
 ### Default logic operators
 - `&&` for *and*
 - `||` for *or*
+- `!`for *not* which works on single boolean and parenthesised expressions.
 
 ### Custom operators
 
-You can define cutom operators in an extension of the `Operator` struct. Then add this operator to the `Operator.models` set. The same applies for the `LogicOperator` struct.
+You can define custom operators in an extension of the `Operator` struct. Then add this operator to the `Operator.models` set. The same applies for the `LogicOperator` struct.
 
-For example, you can define the `hasPrefix` and `hasSuffix` operators  (note that those operators already exist and that their symbols are chosen arbitrarily):
+For example, you can define the `hasPrefix` operator (note that those operators already exist).
 
 ```swift
 extension Operator {
-    static var hasPrefix: Operator { Operator("~=") { (lhs, rhs) -> Bool? in
-        guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
-        return lhs.hasPrefix(rhs)
-    }}
-
-    static var hasSuffix: Operator { Operator("=~") { (lhs, rhs) -> Bool? in
-        guard let lhs = lhs as? String, let rhs = rhs as? String else { return nil }
-        return lhs.hasSuffix(rhs)
+    public static var hasPrefix: Operator { Operator("hasPrefix", isKeyword: true) { (lhs, rhs) in
+        guard let stringLhs = lhs as? String, let stringRhs = rhs as? String else {
+            throw ExpressionError.mismatchingType
+        }
+        return stringLhs.hasPrefix(stringRhs)
     }}
 }
 ```
@@ -134,7 +134,6 @@ Then, in the setup of your app:
 
 ```swift
 Operator.models.insert(.hasPrefix)
-Operator.models.insert(.hasSuffix)
 ```
 
 Finally, you can simply add an operator directly:
@@ -147,7 +146,7 @@ Operator.models.insert(Operator("~=") { (lhs, rhs) in
 
 ```
 
-You can remove if you want the default operators, by calling the proper `Operator.removeDefault[Operator_Name]()` method. You can also directly override the behavior of a default operator, by updating the `Operator.models`  set with an operator which has the same description.
+You can remove if you want the default operators, by calling the proper `Operator.removeFromModels(:)` method. You can also directly override the behavior of a default operator, by updating the `Operator.models`  set with an operator which has the same description.
 
 <u>Note</u><br>
 As it is not possible for now to restrict a closure signature to a protocol without specifying the type as generic in the structure, we cannot allow only `Comparable` operands in an operator `evaluate` closure. Nonetheless, only strings, boolean and double are allowed as operands in this framework now. Moreover, you might want to compare a double and a string, with an opeator like `count` for example. This would no be possible if the two operands were comparable with the same type.
@@ -183,12 +182,12 @@ Variables are provided to the `Expression` with a `[String: String]` dictionary.
 
 A useful property of an `Expression` is `variables`, which is an array of the names of all the variables involved in the expression.
 
-The default regular expression to match a variable is `[a-zA-Z]{1}[a-zA-Z0-9_-]+`. You can choose to use an other regular expression by providing it when initializing an expression:
+The default regular expression to match a variable is `[a-zA-Z]{1}[a-zA-Z0-9_-]+`. You can choose to use an other regular expression by providing it when initialising an expression:
 
 ```swift
 let expression = try? Expression("#variable >= 2", variablesRegexPattern: "[a-zA-Z#]{1}[a-zA-Z0-9#]+")
 ```
-If you always use the same regular expresion, you should consider to write an extension of `Expression` to add the initializer with this default expression. So with our last example:
+If you always use the same regular expression, you should consider to write an extension of `Expression` to add the initialiser with this default expression. So with our last example:
 
 ```swift
 extension Expression {
