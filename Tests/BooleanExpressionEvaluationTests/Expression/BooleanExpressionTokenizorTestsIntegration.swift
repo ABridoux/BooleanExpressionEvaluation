@@ -1,12 +1,7 @@
 //
-//  BooleanExpressionTokenizorTests_Integration.swift
-//  BooleanExpressionEvaluationTests
-//
-//  Created by Alexis Bridoux on 30/11/2019.
-//  Copyright © 2019 Alexis Bridoux. All rights reserved.
-//
-
-//swiftlint:disable type_name
+// Scout
+// Copyright (c) Alexis Bridoux 2020
+// MIT license, see LICENSE file for details
 
 import XCTest
 @testable import BooleanExpressionEvaluation
@@ -32,17 +27,17 @@ class BooleanExpressionTokenizorTestsIntegration: XCTestCase {
 
         let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
-                                        .logicOperator(.or),
+                                        .logicInfixOperator(.or),
                                             .operand(.variable("input")), .comparisonOperator(.equal), .operand(.string("Test"))]
         let expectedTokenizedExpression: Expression = [.bracket(.opening),
                                                             .operand(.boolean(false)),
-                                                      .logicOperator(.and),
+                                                      .logicInfixOperator(.and),
                                                             .operand(.boolean(true)),
                                                         .bracket(.closing),
-                                                        .logicOperator(.or),
+                                                        .logicInfixOperator(.or),
                                                             .operand(.boolean(true))]
         var sut = BooleanExpressionTokenizator(expression: expression, variables: variables)
 
@@ -61,17 +56,17 @@ class BooleanExpressionTokenizorTestsIntegration: XCTestCase {
 
         let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
-                                        .logicOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
+                                        .logicInfixOperator(.or),
+                                        .operand(.string("Fifi")), .comparisonOperator(.isIn), .operand(.variable("Ducks"))]
         let expectedTokenizdExpression: Expression = [.bracket(.opening),
                                                             .operand(.boolean(false)),
-                                                      .logicOperator(.and),
+                                                      .logicInfixOperator(.and),
                                                             .operand(.boolean(false)),
                                                         .bracket(.closing),
-                                                        .logicOperator(.or),
+                                                        .logicInfixOperator(.or),
                                                             .operand(.boolean(true))]
         var sut = BooleanExpressionTokenizator(expression: expression, variables: variables)
 

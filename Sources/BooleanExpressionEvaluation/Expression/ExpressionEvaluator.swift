@@ -1,21 +1,7 @@
 //
-//  GNU GPLv3
-//
-/*
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see https://www.gnu.org/licenses
-    for more information.
-*/
+// Scout
+// Copyright (c) Alexis Bridoux 2020
+// MIT license, see LICENSE file for details
 
 import Foundation
 
@@ -26,6 +12,11 @@ struct ExpressionEvaluator {
     var expressionResults = [[HalfBooleanExpression(boolean: false, logicOperator: .or)]]
     var tokenizator: BooleanExpressionTokenizator
     var currentOpenedBrackets = 0
+    var previousToken: ExpressionElement?
+    var previousTokenWasNotOperator = false
+
+    /// Store the not operators indexed by the current opened brackets
+    var notOperators = [Int]()
 
     // MARK: - Init
 
@@ -44,36 +35,47 @@ struct ExpressionEvaluator {
         // setting the current token to an opening bracket to avoid to have an optional
         currentOpenedBrackets = 0
 
-        while let nextToken = try tokenizator.nextToken() {
-            switch nextToken {
+        while let token = try tokenizator.nextToken() {
 
-            case .logicOperator(let logicOperator):
-                try evaluateExpressionHandleToken(logicOperator: logicOperator)
+            switch token {
+
+            case .logicInfixOperator(let logicOperator):
+                try evaluateExpressionHandle(logicOperator: logicOperator)
 
             case .bracket(.opening):
                 expressionResults.append([HalfBooleanExpression]())
                 currentOpenedBrackets += 1
+
+                if case let .logicPrefixOperator(logicOperator) = previousToken, logicOperator == .not {
+                    notOperators.append(currentOpenedBrackets)
+                }
 
             case .operand(.boolean(let boolean)):
                 let halfBooleanExpression = HalfBooleanExpression(boolean: boolean, logicOperator: nil)
                 expressionResults[currentOpenedBrackets].append(halfBooleanExpression)
 
             case .bracket(.closing):
-                try evaluateExpressionHandleTokenClosingBracket()
+                try evaluateExpressionHandleClosingBracket()
 
-            default:
-                throw ExpressionError.incorrectElement(nextToken.description)
+            case .comparisonOperator, .operand:
+                throw ExpressionError.incorrectElement(token.description)
+
+            case .logicPrefixOperator:
+                break
             }
+
+            previousToken = token
         }
+
         // ensure we got one array left. Otherwise, something went wrong, like uncaught unbalanced brackets
         guard expressionResults.count == 1 else {
             throw ExpressionError.invalidExpression("Unable to flatten the expression for an uncaught error")
         }
-        let flattenBooleanExpression = expressionResults[0]
+        let flattenedBooleanExpression = expressionResults[0]
 
         // get the final result
-        guard let finalResult = evaluate(booleanExpression: flattenBooleanExpression)?.boolean else {
-            throw ExpressionError.invalidExpression("Unable to evaluate the final flatten expression: \(flattenBooleanExpression.description)")
+        guard let finalResult = evaluate(booleanExpression: flattenedBooleanExpression)?.boolean else {
+            throw ExpressionError.invalidExpression("Unable to evaluate the final flatten expression: \(flattenedBooleanExpression.description)")
         }
 
         return finalResult
@@ -81,10 +83,12 @@ struct ExpressionEvaluator {
 
     // MARK: Helpers
 
-    mutating func evaluateExpressionHandleToken(logicOperator: LogicOperator) throws {
-        guard let currentHalfBooleanExpression = expressionResults[currentOpenedBrackets].last,
-            currentHalfBooleanExpression.logicOperator == nil else {
-                throw ExpressionError.invalidGrammar("Logic operator should follow a closing bracket or a comparison expression")
+    mutating func evaluateExpressionHandle(logicOperator: ExpressionElement.LogicInfixOperator) throws {
+        guard
+            let currentHalfBooleanExpression = expressionResults[currentOpenedBrackets].last,
+            currentHalfBooleanExpression.logicOperator == nil
+        else {
+            throw ExpressionError.invalidGrammar("Logic operator should follow a closing bracket or a comparison expression")
         }
 
         let currentHalfBooleanExpressionWithLogicOperator = HalfBooleanExpression(boolean: currentHalfBooleanExpression.boolean, logicOperator: logicOperator)
@@ -92,7 +96,7 @@ struct ExpressionEvaluator {
         expressionResults[currentOpenedBrackets].append(currentHalfBooleanExpressionWithLogicOperator)
     }
 
-    mutating func evaluateExpressionHandleTokenClosingBracket() throws {
+    mutating func evaluateExpressionHandleClosingBracket() throws {
         guard !expressionResults.isEmpty, currentOpenedBrackets > 0 else {
             throw ExpressionError.unbalancedBrackets
         }
@@ -104,7 +108,8 @@ struct ExpressionEvaluator {
         }
 
         if let bracketsResult = evaluate(booleanExpression: booleanExpression)?.boolean {
-            let halfBooleanExpression = HalfBooleanExpression(boolean: bracketsResult, logicOperator: nil)
+            let bool = invert(bool: bracketsResult, for: currentOpenedBrackets)
+            let halfBooleanExpression = HalfBooleanExpression(boolean: bool, logicOperator: nil)
             expressionResults[currentOpenedBrackets - 1].append(halfBooleanExpression)
         }
 
@@ -112,21 +117,17 @@ struct ExpressionEvaluator {
         currentOpenedBrackets -= 1
     }
 
-    /**
-     Reduce an array of `HalfBooleanExpression` to one
-     */
+    /// Reduce an array of `HalfBooleanExpression` to one
     func evaluate(booleanExpression: [HalfBooleanExpression]) -> HalfBooleanExpression? {
         // copy the boolean expression to modify it
         var booleanExpression = booleanExpression
         guard var result = booleanExpression.popFirst() else { return nil }
 
-        /**
-        When the case `boolean || boolean && boolean` is found, it's not possible to evaluate the two
-        `HalfBooleanExpression`. The part `boolean ||` is stored here to evaluate when possible
-         */
+        /// When the case `boolean || boolean && boolean` is found, it's not possible to evaluate the two
+        /// `HalfBooleanExpression`. The part `boolean ||` is stored here to evaluate when possible
         var debt: HalfBooleanExpression?
 
-        for element in booleanExpression {
+        booleanExpression.forEach { element in
             if let partialResult = result.evaluate(with: element) {
                 // we are able to evaluate the result
                 result = partialResult
@@ -143,5 +144,14 @@ struct ExpressionEvaluator {
             }
         }
         return debt?.evaluate(with: result) ?? result
+    }
+
+    /// Invert the provided boolean if a not operator is registered matching the current openent brackets counts
+    mutating func invert(bool: Bool, for openedBracket: Int) -> Bool {
+        if let notOperatorIndex = notOperators.last, notOperatorIndex == openedBracket {
+            notOperators.removeLast()
+            return !bool
+        }
+        return bool
     }
 }

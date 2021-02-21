@@ -1,31 +1,25 @@
 //
-//  GNU GPLv3
-//
-/*  Copyright © 2019-present Alexis Bridoux.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see https://www.gnu.org/licenses
-    for more information.
-*/
+// Scout
+// Copyright (c) Alexis Bridoux 2020
+// MIT license, see LICENSE file for details
 
 import XCTest
 @testable import BooleanExpressionEvaluation
 
 class ExpressionElementTests: XCTestCase {
 
-    func testInitOperand_String() {
+    func testInitOperand_StringDoubleQuotes() {
         do {
             let element = try ExpressionElement.Operand(#""StringValue""#)
+            XCTAssertEqual(element, ExpressionElement.Operand.string("StringValue"))
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testInitOperand_StringSingleQuotes() {
+        do {
+            let element = try ExpressionElement.Operand("'StringValue'")
             XCTAssertEqual(element, ExpressionElement.Operand.string("StringValue"))
         } catch {
             XCTFail(error.localizedDescription)
@@ -51,8 +45,8 @@ class ExpressionElementTests: XCTestCase {
     }
 
     func testInitOperand_Bool() {
-        XCTAssertEqual(try? ExpressionElement.Operand("true"), ExpressionElement.Operand.boolean(true))
-        XCTAssertEqual(try? ExpressionElement.Operand("false"), ExpressionElement.Operand.boolean(false))
+        XCTAssertEqual(try? ExpressionElement.Operand("true"), .boolean(true))
+        XCTAssertEqual(try? ExpressionElement.Operand("false"), .boolean(false))
     }
 
     func testInitOperand_Variable() {

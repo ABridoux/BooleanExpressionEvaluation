@@ -1,38 +1,22 @@
 //
-//  GNU GPLv3
-//
-/*
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see https://www.gnu.org/licenses
-    for more information.
-*/
+// Scout
+// Copyright (c) Alexis Bridoux 2020
+// MIT license, see LICENSE file for details
 
 import Foundation
 
-/**
- Store a left operand boolean and a logic operator for easier evaluation purposes.
- #### Representation examples
-    - true &&
-    - false ||
-    - true
- */
+/// Store a left operand boolean and a logic operator for easier evaluation purposes.
+/// #### Representation examples
+///    - true &&
+///    - false ||
+///    - true
 struct HalfBooleanExpression {
 
     /// Left boolean operand
     let boolean: Bool
 
     /// Logic operator. Can be nil if the `HalfBooleanExpression` is at the end of the expression as the last operand.
-    let logicOperator: LogicOperator?
+    let logicOperator: ExpressionElement.LogicInfixOperator?
 
     /**
      Evaluate a `HalfBooleanExpression` with another one as the right operand.
@@ -74,7 +58,7 @@ struct HalfBooleanExpression {
         } else {
             // the other expression doesn't have a logic operator, so we can simply return a boolean
             let result = logicOperator.evaluate(boolean, otherExpression.boolean)
-            return HalfBooleanExpression(boolean: result , logicOperator: nil)
+            return HalfBooleanExpression(boolean: result, logicOperator: nil)
         }
     }
 }

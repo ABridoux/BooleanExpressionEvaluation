@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file. `BooleanExpressionEvaluation` adheres to [Semantic Versioning](http://semver.org).
 
 ---
+## [2.0.0](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/2.0.0) (21/02/2021)
+
+### Added
+- 'not' `!` operator [#46]
+- Single quote to specify a string are supported [#42]
+- New operator `matches` to match a variable against a regular expression [#41]
+- New operator `contains` between strings.
+- Support for list with escaped commas with the "isIn" operator [#40]
+
+### Changed
+- Custom operators have been replaced for their names [#43]
+- An operator function should now throws rather than returning an optional
+- Default operator `<:` is no< `isIn` and has a reverse operand order.
+
+### Fixed
+- Using an undefined variable as a right operand will now throw an error
+- Default operators were always treating operand as Strings
+
+
 ## [1.2.3](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/1.2.3) (30/03/2020)
 
 ### Fixed

@@ -1,22 +1,7 @@
 //
-//  GNU GPLv3
-//
-/*  Copyright © 2019-present Alexis Bridoux.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see https://www.gnu.org/licenses
-    for more information.
-*/
+// Scout
+// Copyright (c) Alexis Bridoux 2020
+// MIT license, see LICENSE file for details
 
 import XCTest
 @testable import BooleanExpressionEvaluation
@@ -42,7 +27,7 @@ class ExpressionTests: XCTestCase {
 
     func testInit_TwoOperands() {
         let expression: Expression = [.operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                       .operand(.variable("input")), .comparisonOperator(.equal), .operand(.string("Test"))]
         test(#"variable >= 1.5 && input == "Test""#, expression)
     }
@@ -50,85 +35,75 @@ class ExpressionTests: XCTestCase {
     func testInit_Brackets() {
         let expression: Expression = [.bracket(.opening),
                                       .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                         .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
-                                      .logicOperator(.or),
+                                      .logicInfixOperator(.or),
                                       .operand(.variable("input")), .comparisonOperator(.equal), .operand(.string("Test"))]
+
         test(#"(variable >= 1.5 && isCheck == true) || input == "Test""#, expression)
     }
 
-    func testInit_ThrowsAnErrorIfIncorrectElement() {
+    func testInit_ThrowsAnErrorIfIncorrectElement() throws {
         let string = "variable = 2*"
-        do {
-            _ = try Expression(string)
-            XCTFail("Initializing the expression with an incorrect string should throw an error")
-        } catch {
-            guard case ExpressionError.invalidVariableName(_) = error else {
-                XCTFail("Initizalizing an Expression with an empty string should have thrown a ExpressionError.invalidVariableName error")
-                return
-            }
-        }
+
+        XCTAssertErrorsEqual(try Expression(string), .invalidVariableName("="))
     }
 
     func testInit_ThrowsAnErrorIfEmptyExpression() {
-        do {
-            _ = try Expression("")
-            XCTFail("Initializing the expression with an incorrect string should throw an error")
-        } catch {
-            guard case ExpressionError.emptyExpression = error else {
-                XCTFail("Initialasing an Expression with an empty string should have thrown a ExpressionError.emptyExpression error")
-                return
-            }
-        }
+        XCTAssertErrorsEqual(_ = try Expression(""), .emptyExpression)
     }
 
-    func testInit_StringWithSpace() {
+    func testInit_StringWithSpace() throws {
         let string = #"variable == "String with space""#
-        do {
-            let expression = try Expression(string)
-            XCTAssertEqual(expression, [.operand(.variable("variable")), .comparisonOperator(.equal), .operand(.string("String with space"))])
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
+        let expression = try Expression(string)
+
+        XCTAssertEqual(expression, [.operand(.variable("variable")), .comparisonOperator(.equal), .operand(.string("String with space"))])
     }
 
-    func testInit_StringExtraSpaces() {
+    func testInit_StringExtraSpaces() throws {
         let string = #"variable == " String with space " "#
-        do {
-            let expression = try Expression(string)
-            XCTAssertEqual(expression, [.operand(.variable("variable")), .comparisonOperator(.equal), .operand(.string(" String with space "))])
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
+        let expression = try Expression(string)
+
+        XCTAssertEqual(expression, [.operand(.variable("variable")), .comparisonOperator(.equal), .operand(.string(" String with space "))])
+    }
+
+    func testNotOperator() throws {
+        let string = #"!variable"#
+
+        let expression = try Expression(string)
+
+        let expectedExpression = Expression(.logicPrefixOperator(.not), .operand(.variable("variable")))
+        XCTAssertEqual(expression, expectedExpression)
+    }
+
+    func testNotOperatorBeforeBrackets() throws {
+        let string = #"!(variable == 2)"#
+
+        let expression = try Expression(string)
+
+        let expectedExpression = Expression(.logicPrefixOperator(.not),
+                                            .bracket(.opening),
+                                            .operand(.variable("variable")), .comparisonOperator(.equal), .operand(.number(2)),
+                                            .bracket(.closing))
+        XCTAssertEqual(expression, expectedExpression)
     }
 
     // MARK: Codable
 
-    func testCanDecodeFromString() {
-        guard let data = try? JSONEncoder().encode("(variable >= 1.5)") else {
-            XCTFail("Unable to encode a String ? Strange 🤔")
-            return
-        }
+    func testCanDecodeFromString() throws {
+        let data = try JSONEncoder().encode("(variable >= 1.5)")
         let decoder = JSONDecoder()
         let expression = try? decoder.decode(Expression.self, from: data)
 
         XCTAssertEqual(expression, [.bracket(.opening), .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)), .bracket(.closing)])
     }
 
-    func testCanEncodeToString() {
-
+    func testCanEncodeToString() throws {
         let expression: Expression = [.bracket(.opening), .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)), .bracket(.closing)]
-        let data: Data
-        do {
-            data = try JSONEncoder().encode(expression)
-        } catch {
-            XCTFail("Unable to encode the expression \(expression.description): \(error.localizedDescription)")
-            return
-        }
+        let data = try JSONEncoder().encode(expression)
 
-        let decoder = JSONDecoder()
-        let stringExpression = try? decoder.decode(String.self, from: data)
+        let stringExpression = try JSONDecoder().decode(String.self, from: data)
 
         XCTAssertEqual(stringExpression, expression.description)
     }

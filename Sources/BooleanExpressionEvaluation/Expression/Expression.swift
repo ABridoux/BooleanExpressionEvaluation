@@ -1,22 +1,7 @@
 //
-//  GNU GPLv3
-//
-/*  Copyright © 2019-present Alexis Bridoux.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see https://www.gnu.org/licenses
-    for more information.
-*/
+// Scout
+// Copyright (c) Alexis Bridoux 2020
+// MIT license, see LICENSE file for details
 
 import Foundation
 
@@ -24,18 +9,23 @@ import Foundation
 public struct Expression: Collection, CustomStringConvertible {
 
     public typealias Element = ExpressionElement
-    public typealias ArrayType = [ExpressionElement]
+    public typealias Elements = [ExpressionElement]
 
     // MARK: - Constants
 
-    static let operatorsPattern = "[\(Operator.regexPattern)\(LogicOperator.regexPattern)]+"
+    static var operatorsPattern: String {
+        "[\(Operator.regexPattern)" +
+        ExpressionElement.LogicInfixOperator.regexPattern +
+        "\(ExpressionElement.LogicPrefixOperator.regexPattern)]+" +
+        "|(\(Operator.regexKeywordPattern))+"
+    }
     static let bracketsPattern = #"[\(\)]+"#
 
     // MARK: - Properties
 
     // MARK: Collection
 
-    private var elements = ArrayType()
+    private var elements = Elements()
 
     public var startIndex: Int { elements.startIndex }
     public var endIndex: Int { elements.endIndex }
@@ -78,6 +68,16 @@ public struct Expression: Collection, CustomStringConvertible {
         return variableNames
     }
 
+    /// The operators involved the the expression
+    public var operators: [Operator] {
+        elements.compactMap { element in
+            if case let .comparisonOperator(comparisonOperator) = element {
+                return comparisonOperator
+            }
+            return nil
+        }
+    }
+
     // MARK: - Initialiation
 
     public init(_ stringExpression: String, variablesRegexPattern: String? = nil) throws {
@@ -94,11 +94,11 @@ public struct Expression: Collection, CustomStringConvertible {
             var elementWithoutBrackets = String(element)
 
             // > 1 otherwise it is a sole bracket
-            if elementWithoutBrackets.hasPrefix("("), element.count > 1 {
+            if elementWithoutBrackets.hasPrefix(ExpressionElement.Bracket.opening.rawValue), element.count > 1 {
                 evaluatedExpression.append(.bracket(.opening))
                 elementWithoutBrackets.removeFirst()
             }
-            if elementWithoutBrackets.hasSuffix(")"), element.count > 1 {
+            if elementWithoutBrackets.hasSuffix(ExpressionElement.Bracket.closing.rawValue), element.count > 1 {
                 addClosingBracket = true
                 elementWithoutBrackets.removeLast()
             }
@@ -110,6 +110,7 @@ public struct Expression: Collection, CustomStringConvertible {
                 evaluatedExpression.append(.bracket(.closing))
             }
         }
+
         guard !evaluatedExpression.isEmpty else {
             throw ExpressionError.emptyExpression
         }
@@ -117,9 +118,13 @@ public struct Expression: Collection, CustomStringConvertible {
         elements = evaluatedExpression
     }
 
-    public init(_ elements: ArrayType) {
+    public init(_ elements: Elements) {
         regexPattern = Self.computeRegexPattern()
         self.elements = elements
+    }
+
+    public init(_ elements: Element...) {
+        self.init(elements)
     }
 
     // MARK: - Functions

@@ -1,22 +1,7 @@
 //
-//  GNU GPLv3
-//
-/*  Copyright © 2019-present Alexis Bridoux.
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see https://www.gnu.org/licenses
-    for more information.
-*/
+// Scout
+// Copyright (c) Alexis Bridoux 2020
+// MIT license, see LICENSE file for details
 
 import XCTest
 @testable import BooleanExpressionEvaluation
@@ -44,31 +29,25 @@ class ExpressionEvaluatorTests: XCTestCase {
 
     // MARK: Evaluate boolean expression
 
-    func testEvaluateBooleanExpression1() {
+    func testEvaluateBooleanExpression1() throws {
         let booleanExpression = [HalfBooleanExpression(boolean: true, logicOperator: .and),
                                  HalfBooleanExpression(boolean: false, logicOperator: .or),
                                  HalfBooleanExpression(boolean: false, logicOperator: nil)]
 
         let result = sut.evaluate(booleanExpression: booleanExpression)
 
-        guard let booleanResult = result?.boolean else {
-            XCTFail("The boolean expression has not properly been evaluated")
-            return
-        }
+        let booleanResult = try XCTUnwrap(result?.boolean)
         XCTAssertFalse(booleanResult)
     }
 
-    func testEvaluateBooleanExpression2() {
+    func testEvaluateBooleanExpression2() throws {
         let booleanExpression = [HalfBooleanExpression(boolean: true, logicOperator: .and),
                                  HalfBooleanExpression(boolean: true, logicOperator: .or),
                                  HalfBooleanExpression(boolean: false, logicOperator: nil)]
 
         let result = sut.evaluate(booleanExpression: booleanExpression)
 
-        guard let booleanResult = result?.boolean else {
-            XCTFail("The boolean expression has not properly been evaluated")
-            return
-        }
+        let booleanResult = try XCTUnwrap(result?.boolean)
         XCTAssertTrue(booleanResult)
     }
 
@@ -86,7 +65,7 @@ class ExpressionEvaluatorTests: XCTestCase {
         XCTAssertTrue(booleanResult)
     }
 
-    func testEvaluateBooleanExpression4() {
+    func testEvaluateBooleanExpression4() throws {
         let booleanExpression = [HalfBooleanExpression(boolean: false, logicOperator: .or),
                                  HalfBooleanExpression(boolean: true, logicOperator: .and),
                                  HalfBooleanExpression(boolean: true, logicOperator: .and),
@@ -95,146 +74,116 @@ class ExpressionEvaluatorTests: XCTestCase {
 
         let result = sut.evaluate(booleanExpression: booleanExpression)
 
-        guard let booleanResult = result?.boolean else {
-            XCTFail("The boolean expression has not properly been evaluated")
-            return
-        }
+        let booleanResult = try XCTUnwrap(result?.boolean)
         XCTAssertTrue(booleanResult)
     }
 
     // MARK: Evaluate expression - Integration tests
 
-    func testEvaluateExpression1() {
+    func testEvaluateExpression() throws {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
-                                        .logicOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
+                                        .logicInfixOperator(.or),
+                                        .operand(.string("Fifi")), .comparisonOperator(.isIn), .operand(.variable("Ducks"))]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
-        do {
-            let result = try sut.evaluateExpression()
-            XCTAssertTrue(result)
-        } catch {
-            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
-        }
+        XCTAssertTrue(try sut.evaluateExpression())
     }
 
-    func testEvaluateExpression2_UnbalancedBracketThrowsError() {
+    func testEvaluateExpression_UnbalancedBracketThrowsError() {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [  .operand(.variable("variable")), .comparisonOperator(.lesserThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
                                         .bracket(.closing),
-                                        .logicOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi"))]
+                                        .logicInfixOperator(.or),
+                                            .operand(.variable("Ducks")), .comparisonOperator(.isIn), .operand(.string("Fifi"))]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
-        XCTAssertThrowsError(try sut.evaluateExpression(), "") { error in
-            guard case ExpressionError.unbalancedBrackets = error else {
-                XCTFail("The function should have thrown an unbalanced bracket error")
-                return
-            }
-        }
+
+        XCTAssertErrorsEqual(try sut.evaluateExpression(), .unbalancedBrackets)
     }
 
-    func testEvaluateExpression2_UndefinedVariable() {
+    func testEvaluateExpression_UndefinedVariable() throws {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [  .operand(.variable("variable")), .comparisonOperator(.lesserThanOrEqual), .operand(.number(1.5)),
-                                      .logicOperator(.and),
+                                      .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                        .logicOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.variable("Fifi"))]
-
+                                        .logicInfixOperator(.or),
+                                            .operand(.variable("Ducks")), .comparisonOperator(.isIn), .operand(.variable("Fifi"))]
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
-        do {
-            let result = try sut.evaluateExpression()
-            XCTAssertFalse(result)
-        } catch {
-            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
-        }
+        XCTAssertErrorsEqual(try sut.evaluateExpression(), .undefinedVariable("Fifi"))
     }
 
-    func testEvaluateExpression2_UselessBrackets1() {
+    func testEvaluateExpression_UselessBrackets1() throws {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
          let expression: Expression = [.bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                        .logicOperator(.and),
+                                        .logicInfixOperator(.and),
                                         .bracket(.opening),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                        .logicOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),
+                                        .logicInfixOperator(.or),
+                                            .operand(.variable("Ducks")), .comparisonOperator(.isIn), .operand(.string("Fifi")),
                                         .bracket(.closing),
                                         .bracket(.closing)]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
-        do {
-            let result = try sut.evaluateExpression()
-            XCTAssertFalse(result)
-        } catch {
-            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
-        }
+        let result = try sut.evaluateExpression()
+        XCTAssertFalse(result)
     }
 
-    func testEvaluateExpression2_UselessBrackets2() {
+    func testEvaluateExpression_UselessBrackets2() throws {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
          let expression: Expression = [.bracket(.opening), .bracket(.opening), .bracket(.opening),
                                             .operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(1.5)),
-                                        .logicOperator(.and),
+                                        .logicInfixOperator(.and),
                                             .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                        .logicOperator(.or),
-                                            .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),
+                                        .logicInfixOperator(.or),
+                                        .operand(.string("Fifi")), .comparisonOperator(.isIn), .operand(.variable("Ducks")),
                                         .bracket(.closing), .bracket(.closing), .bracket(.closing)]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
-        do {
-            let result = try sut.evaluateExpression()
-            XCTAssertTrue(result)
-        } catch {
-            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
-        }
+        let result = try sut.evaluateExpression()
+        XCTAssertTrue(result)
     }
 
-    func testEvaluateExpression2_DebtTrueOr() {
+    func testEvaluateExpression_DebtTrueOr() throws {
         variables["variable"] = "1"
         variables["isCheck"] = "false"
         variables["Ducks"] = "Riri, Fifi, Loulou"
 
         let expression: Expression = [.operand(.variable("variable")), .comparisonOperator(.greaterThanOrEqual), .operand(.number(0.5)),
-                                      .logicOperator(.or),
+                                      .logicInfixOperator(.or),
                                       .operand(.variable("isCheck")), .comparisonOperator(.equal), .operand(.boolean(true)),
-                                      .logicOperator(.and),
-                                      .operand(.variable("Ducks")), .comparisonOperator(.contains), .operand(.string("Fifi")),]
+                                      .logicInfixOperator(.and),
+                                      .operand(.variable("Ducks")), .comparisonOperator(.isIn), .operand(.string("Fifi")) ]
 
         var sut = ExpressionEvaluator(expression: expression, variables: variables)
 
-        do {
-            let result = try sut.evaluateExpression()
-            XCTAssertTrue(result)
-        } catch {
-            XCTFail("Unable to evaluate the expression: \(error.localizedDescription)")
-        }
+        let result = try sut.evaluateExpression()
+        XCTAssertTrue(result)
     }
 }

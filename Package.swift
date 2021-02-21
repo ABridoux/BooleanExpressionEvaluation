@@ -6,7 +6,7 @@ let package = Package(
     name: "BooleanExpressionEvaluation",
     platforms: [.macOS("10.12"), .iOS("11.0")],
     products: [
-        .library(name: "BooleanExpressionEvaluation", targets: ["BooleanExpressionEvaluation"]),
+        .library(name: "BooleanExpressionEvaluation", targets: ["BooleanExpressionEvaluation"])
     ],
     dependencies: [],
     targets: [

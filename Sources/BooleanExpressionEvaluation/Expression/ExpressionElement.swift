@@ -1,22 +1,7 @@
 //
-//  GNU GPLv3
-//
-/*
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see https://www.gnu.org/licenses
-    for more information.
-*/
-
+// Scout
+// Copyright (c) Alexis Bridoux 2020
+// MIT license, see LICENSE file for details
 import Foundation
 
 /// Represent an element in a boolean expression
@@ -24,19 +9,70 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
 
     // MARK: - Properties
 
-    // MARK: Cases
-
     case comparisonOperator(Operator)
-    case logicOperator(LogicOperator)
+    case logicPrefixOperator(LogicPrefixOperator)
+    case logicInfixOperator(LogicInfixOperator)
     case bracket(Bracket)
     case operand(Operand)
 
-    // MARK: - Associated enums
+    /// The boolean value if the element is a boolean operand
+    var isTrue: Bool {
+        guard
+            case let .operand(operand) = self,
+            case let .boolean(bool) = operand
+        else { return false }
+
+        return bool
+    }
+
+    // MARK: - Properties
+
+    public var description: String {
+        switch self {
+        case .comparisonOperator(let comparisonOperator): return comparisonOperator.description
+        case .logicPrefixOperator(let logicOperator): return logicOperator.description
+        case .logicInfixOperator(let logicOperator): return logicOperator.description
+        case .bracket(let bracket): return bracket.rawValue
+        case .operand(let operand): return operand.description
+        }
+    }
+
+    // MARK: - Initialization
+
+    init(element: String, variablesRegexPattern: String? = nil) throws {
+        if let comparisonOperator = Operator.findModel(with: element) {
+            self = .comparisonOperator(comparisonOperator)
+        } else if let logicOperator = LogicPrefixOperator.findModel(with: element) {
+            self = .logicPrefixOperator(logicOperator)
+        } else if let logicOperator = LogicInfixOperator.findModel(with: element) {
+            self = .logicInfixOperator(logicOperator)
+        } else if let bracket = Bracket(rawValue: element) {
+            self = .bracket(bracket)
+        } else {
+            self = .operand(try Operand(element, variablesRegexPattern: variablesRegexPattern))
+        }
+    }
+
+    public init(from decoder: Decoder) throws {
+        let key = try decoder.singleValueContainer().decode(String.self)
+        self = try ExpressionElement(element: key)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(description)
+    }
+}
+
+extension ExpressionElement {
 
     public enum Bracket: String {
         case opening = "("
         case closing = ")"
     }
+}
+
+extension ExpressionElement {
 
     public enum Operand: Equatable, CustomStringConvertible {
         case variable(String)
@@ -45,11 +81,12 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
         case boolean(Bool)
 
         init(_ element: String, variablesRegexPattern: String? = nil) throws {
-            if element.first == "\"" && element.last == "\"" {
+            if element.isEnclosed(by: "\"") || element.isEnclosed(by: "'") {
+                let enclosingQuote = element.first !! "The element should be enclosed with quotes here"
                 var string = element
                 string.removeFirst()
                 string.removeLast()
-                guard !string.contains("\"") else {
+                guard !string.contains(enclosingQuote) else {
                     throw ExpressionError.invalidStringQuotation(element)
                 }
                 self = .string(string)
@@ -59,8 +96,10 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
                 self = .boolean(boolean)
             } else {
                 let pattern = variablesRegexPattern ?? Self.variableRegexPattern
-                guard let regex = try? NSRegularExpression(pattern: pattern, options: []),
-                regex.matchFoundIn(element) else {
+                guard
+                    let regex = try? NSRegularExpression(pattern: pattern),
+                    regex.matchFoundIn(element)
+                else {
                     throw ExpressionError.invalidVariableName(element)
                 }
                 self = .variable(element)
@@ -78,7 +117,7 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
 
         static let booleanRegexPattern = "true|false"
         static let numberRegexPattern = #"[0-9\.]+"#
-        static let stringRegexPattern =  #""[^"]*""#
+        static let stringRegexPattern =  #""[^"]*"|'[^']*'"#
         static let variableRegexPattern = "[a-zA-Z]{1}[a-zA-Z0-9_-]+"
 
         static func getRegexPattern(variablesRegexPattern: String? = nil) -> String {
@@ -91,40 +130,5 @@ public enum ExpressionElement: Equatable, CustomStringConvertible, Codable {
 
             return pattern
         }
-    }
-
-    // MARK: - Properties
-
-    public var description: String {
-        switch self {
-        case .comparisonOperator(let comparisonOperator): return comparisonOperator.description
-        case .logicOperator(let logicOperator): return logicOperator.description
-        case .bracket(let bracket): return bracket.rawValue
-        case .operand(let operand): return operand.description
-        }
-    }
-
-    // MARK: - Initialization
-
-    init(element: String, variablesRegexPattern: String? = nil) throws {
-        if let comparisonOperator = Operator.findModel(with: element) {
-            self = .comparisonOperator(comparisonOperator)
-        } else if let logicOperator = LogicOperator.findModel(with: element) {
-            self = .logicOperator(logicOperator)
-        } else if let bracket = Bracket(rawValue: element) {
-            self = .bracket(bracket)
-        } else {
-            self = .operand(try Operand(element, variablesRegexPattern: variablesRegexPattern))
-        }
-    }
-
-    public init(from decoder: Decoder) throws {
-        let key = try decoder.singleValueContainer().decode(String.self)
-        self = try ExpressionElement(element: key)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(description)
     }
 }
