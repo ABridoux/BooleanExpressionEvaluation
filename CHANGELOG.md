@@ -3,10 +3,15 @@
 All notable changes to this project will be documented in this file. `BooleanExpressionEvaluation` adheres to [Semantic Versioning](http://semver.org).
 
 ---
+## [2.0.1](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/2.0.1) (07/04/2021)
+
+### Fixed
+- Add compatibility with iOS 10+ [#54]
+
 ## [2.0.0](https://github.com/ABridoux/BooleanExpressionEvaluation/tree/2.0.0) (21/02/2021)
 
 ### Added
-- 'not' `!` operator [#46]
+- ’not’ `!` operator [#46]
 - Single quote to specify a string are supported [#42]
 - New operator `matches` to match a variable against a regular expression [#41]
 - New operator `contains` between strings.
