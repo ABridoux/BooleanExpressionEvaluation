@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "BooleanExpressionEvaluation",
-    platforms: [.macOS("10.12"), .iOS("11.0")],
+    platforms: [.macOS("10.12"), .iOS("10.0")],
     products: [
         .library(name: "BooleanExpressionEvaluation", targets: ["BooleanExpressionEvaluation"])
     ],
